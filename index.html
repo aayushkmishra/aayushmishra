@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aayush Kumar Mishra - AI/ML & Backend Developer</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea'/%3E%3Cstop offset='100%25' style='stop-color:%23764ba2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='6' fill='url(%23grad)'/%3E%3Cpath d='M8 24 L16 8 L24 24 M11 20 L21 20' stroke='white' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Three.js Background Canvas -->
+    <canvas id="threejs-background"></canvas>
+    
+    <!-- Floating Geometric Shapes -->
+    <div class="floating-shapes">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+        <div class="floating-shape shape-5"></div>
+    </div>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <div class="logo-a">
+                            <div class="a-left"></div>
+                            <div class="a-right"></div>
+                            <div class="a-crossbar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#skills" class="nav-link">Skills</a></li>
+                <li><a href="#experience" class="nav-link">Experience</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <div class="theme-toggle-track">
+                        <div class="theme-toggle-thumb">
+                            <i class="fas fa-moon moon-icon"></i>
+                            <i class="fas fa-sun sun-icon"></i>
+                        </div>
+                    </div>
+                </button>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h2 class="hero-greeting">Hey, I'm Aayush 👋</h2>
+                    <div class="hero-title-container">
+                        <h1 class="hero-title-main">Software Engineer</h1>
+                        <h2 class="hero-title-sub">Data Enthusiast & AI/ML Developer</h2>
+                    </div>
+                    <p class="hero-description">
+                        Engineer at the intersection of scalable systems and artificial intelligence. I craft backend solutions, APIs, and RAG-driven architectures that power real-world AI applications. Skilled in Python, system design, and ML/GenAI pipelines, I bring a balance of technical depth and practical problem-solving to every project.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#projects" class="btn btn-primary">View My Work</a>
+                        <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                        <button class="btn btn-download" onclick="openResumeModal()">
+                            <i class="fas fa-file-pdf"></i>
+                            View Resume
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="hero-avatar">
+                        <div class="avatar-circle">
+                            <img src="8403D424-64CA-45E9-B2C9-06E643718980.jpg" alt="Aayush Kumar Mishra" class="avatar-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about reveal" id="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-main">
+                    <div class="about-intro">
+                        <div class="intro-header">
+                            <h3>Hello, I'm Aayush! 👋</h3>
+                            <p class="intro-subtitle">Developer & AI/ML Enthusias</p>
+                        </div>
+                        
+                        <div class="intro-text">
+                            <p>
+                                I'm a passionate technologist who loves building intelligent systems and scalable backend solutions. My expertise spans backend engineering, data pipelines, and AI/ML, with a strong focus on Generative AI, retrieval-augmented generation (RAG), and agentic workflows.
+                            </p>
+                            <p>
+                                With experience across the stack, I enjoy creating end-to-end solutions that combine robust system design with modern AI capabilities. Recently, I’ve been working on cloud-native architectures, data engineering, and deploying production-ready applications that bridge backend performance with AI innovation.
+                            </p>
+                        </div>
+
+                        <div class="about-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">5+</div>
+                                <div class="stat-label">Years Experience</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">20+</div>
+                                <div class="stat-label">Projects Completed</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">15+</div>
+                                <div class="stat-label">Technologies</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="about-highlights">
+                        <h4>What I Do</h4>
+                        <div class="highlights-grid">
+                            <div class="highlight-card">
+                                <div class="highlight-icon">
+                                    <i class="fas fa-server"></i>
+                                </div>
+                                <div class="highlight-content">
+                                    <h5>Backend Development</h5>
+                                    <p>Designing scalable APIs, microservices, and robust backend architectures using modern technologies.</p>
+                                </div>
+                            </div>
+                            <div class="highlight-card">
+                                <div class="highlight-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="highlight-content">
+                                    <h5>AI/ML Engineering</h5>
+                                    <p>Building intelligent systems with machine learning, deep learning, and generative AI technologies.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="highlight-card">
+                                <div class="highlight-icon">
+                                    <i class="fas fa-cloud"></i>
+                                </div>
+                                <div class="highlight-content">
+                                    <h5>Cloud Architecture</h5>
+                                    <p>Implementing cloud-native solutions on AWS and Azure with focus on performance and scalability.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="experience reveal" id="experience">
+        <div class="container">
+            <h2 class="section-title">Experience</h2>
+            <div class="experience-timeline">
+                <div class="experience-item">
+                    <div class="experience-date">Jul 2025 - Present</div>
+                    <div class="experience-content">
+                        <h3>SDE - II (AI)</h3>
+                        <h4>Innovaccer Inc.</h4>
+                        <p>
+                            Leading the development of cutting-edge agentic AI and generative AI solutions.
+                            Architecting intelligent healthcare data platforms that revolutionize patient care through AI-driven insights.
+                        </p>
+                        <ul>
+                            <li>Designing robust ML solutions for datastore cost optimization and automated workflows.</li>
+                            <li>Developed REST APIs using Flask and FastAPI for healthcare industry applications.</li>
+                            <li>Designing API endpoints for scalable backend services, ensuring reliability and performance.</li>
+                            <li>Integrated APIs with data platforms and datastores including PostgreSQL, Snowflake, and Redis.</li>
+                            <li>Collaborated on backend architecture planning to support healthcare data workflows.</li>
+                            <li>Looking forward to keep contributing and learning more about complex system design application and Agentic integration in healthcare sector.</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span class="tech-chip">Python</span>
+                            <!-- <span class="tech-chip">Go Lang</span> -->
+                            <!-- <span class="tech-chip">MCP</span> -->
+                            <span class="tech-chip">Gen AI</span>
+                            <span class="tech-chip">Snowflake</span>
+                            <span class="tech-chip">PostgreSQL</span>
+                            <span class="tech-chip">AWS</span>
+                            <span class="tech-chip">Azure</span>
+                            <span class="tech-chip">REST</span>
+                            <span class="tech-chip">Kubernetes</span>
+                            <span class="tech-chip">ML</span>    
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="experience-item">
+                    <div class="experience-date">Nov 2023 - Jun 2025</div>
+                    <div class="experience-content">
+                        <h3>Lead Software Engineer : DS/ML</h3>
+                        <h4>SIRION</h4>
+                        <p>
+                            Specialized in building robust backend systems and APIs for enterprise-level applications. 
+                            Focused on microservices architecture and cloud-native development practices.
+                            Developed scalable solution with integartion GEN AI and RAG based architectures to deliver intelligent solutions.
+                        </p>
+                        <ul>
+                            <li>Designed and implemented RESTful APIs serving 500k+ requests daily.</li>
+                            <li>Integrated multiple RAG based pipelines with REST Framework and streaming for highly available intelligent solution.</li>
+                            <li>Delivering Optimized Automated Prdouct wrappers for customized solution saving customer onboarding time and streaming solution.</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span class="tech-chip">Python</span>
+                            <span class="tech-chip">Java</span>
+                            <span class="tech-chip">LLM</span>
+                            <span class="tech-chip">MongoDB</span>
+                            <span class="tech-chip">LangChain</span>
+                            <span class="tech-chip">AWS</span>
+                            <span class="tech-chip">Mysql</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="experience-item">
+                    <div class="experience-date">Jul 2021 - Nov 2023</div>
+                    <div class="experience-content">
+                        <h3>Software Engineer : Data services</h3>
+                        <h4>BETSOL</h4>
+                        <p>
+                            Developed end-to-end enterprise product applications using modern frameworks and technologies. 
+                            Gained comprehensive experience in both frontend and backend development.
+                        </p>
+                        <ul>
+                            <li>Designed and developed scalable web applications and microservices using React, JavaScript, Python, and SQL</li>
+                            <li>Built and optimized APIs, reducing development time by 30% through streamlined code management and reviews</li>
+                            <li>Integrated and managed databases including MongoDB and MySQL to support data-driven applications</li>
+                            <li>Collaborated directly with clients to deliver product solutions, driving efficiency improvements and system performance gains of over 20%</li>
+                            <li>Trained and mentored team members on technical stacks, best practices, and code optimization</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span class="tech-chip">Angular</span>
+                            <span class="tech-chip">Python</span>
+                            <span class="tech-chip">JavaScript</span>
+                            <span class="tech-chip">MongoDB</span>
+                            <span class="tech-chip">MySQL</span>
+                            <span class="tech-chip">Data Science</span>
+                            <span class="tech-chip">REST</span>
+                            <span class="tech-chip">Java</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- <div class="experience-item">
+                    <div class="experience-date">2021 - 2022</div>
+                    <div class="experience-content">
+                        <h3>Software Developer Intern</h3>
+                        <h4>StartUp Ventures</h4>
+                        <p>
+                            Started my professional journey as a software development intern, working on various projects 
+                            and learning industry best practices in software development.
+                        </p>
+                        <ul>
+                            <li>Contributed to open-source projects and internal tools</li>
+                            <li>Learned version control systems and collaborative development</li>
+                            <li>Gained experience in agile development methodologies</li>
+                            <li>Built foundation in multiple programming languages and frameworks</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span class="tech-chip">Python</span>
+                            <span class="tech-chip">JavaScript</span>
+                            <span class="tech-chip">Git</span>
+                            <span class="tech-chip">HTML/CSS</span>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </section>
+<!-- 
+    <section class="projects reveal" id="projects">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>Agentic AI System with MCP</h3>
+                        <p>
+                            Developed an intelligent agent system using Model Context Protocol 
+                            for enhanced conversational AI with persistent context memory.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">MCP</span>
+                            <span class="tech-tag">Gen AI</span>
+                            <span class="tech-tag">AWS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>Healthcare ML Analytics Platform</h3>
+                        <p>
+                            Built a comprehensive ML platform for healthcare data analysis 
+                            using Snowflake for data warehousing and PostgreSQL for operational data.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Snowflake</span>
+                            <span class="tech-tag">PostgreSQL</span>
+                            <span class="tech-tag">Azure</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>Scalable Backend API</h3>
+                        <p>
+                            Developed high-performance backend APIs using Go Lang with 
+                            cloud-native architecture for microservices deployment.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Go</span>
+                            <span class="tech-tag">PostgreSQL</span>
+                            <span class="tech-tag">AWS</span>
+                            <span class="tech-tag">Docker</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>Gen AI Content Platform</h3>
+                        <p>
+                            Created an AI-powered content generation platform with natural language 
+                            processing capabilities for automated content creation.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Gen AI</span>
+                            <span class="tech-tag">NLP</span>
+                            <span class="tech-tag">Azure</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+    <section class="skills reveal" id="skills">
+        <div class="container">
+            <h2 class="section-title">Skills & Technologies</h2>
+            
+            <!-- AI & Machine Learning Row -->
+            <div class="skill-row">
+                <h3 class="row-title">AI & Machine Learning</h3>
+                <div class="skills-row-grid">
+                    <div class="skill-card" data-skill="agentic-ai">
+                        <i class="fas fa-robot"></i>
+                        <span>Agentic AI</span>
+                    </div>
+                    <div class="skill-card" data-skill="machine-learning">
+                        <i class="fas fa-brain"></i>
+                        <span>Machine Learning</span>
+                    </div>
+                    <div class="skill-card" data-skill="generative-ai">
+                        <i class="fas fa-magic"></i>
+                        <span>Generative AI</span>
+                    </div>
+                    <div class="skill-card" data-skill="mcp">
+                        <i class="fas fa-comments"></i>
+                        <span>MCP</span>
+                    </div>
+                    <!-- <div class="skill-card" data-skill="python-ml">
+                        <i class="fab fa-python"></i>
+                        <span>Python</span>
+                    </div> -->
+                    <div class="skill-card" data-skill="tensorflow">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>TensorFlow</span>
+                    </div>
+                    <div class="skill-card" data-skill="LangChain">
+                        <i class="fas fa-chain"></i>
+                        <span>LangChain</span>
+                    </div>
+                    <div class="skill-card" data-skill="PyTorch">
+                        <i class="fas fa-fire"></i>
+                        <span>PyTorch</span>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Backend Development Row -->
+            <div class="skill-row">
+                <h3 class="row-title">Backend Development</h3>
+                <div class="skills-row-grid">
+                    <div class="skill-card" data-skill="python-backend">
+                        <i class="fab fa-python"></i>
+                        <span>Python</span>
+                    </div>
+                    <div class="skill-card" data-skill="java">
+                        <i class="fab fa-java"></i>
+                        <span>Java</span>
+                    </div>
+                    <!-- <div class="skill-card" data-skill="golang">
+                        <i class="fas fa-code"></i>
+                        <span>Go Lang</span>
+                    </div> -->
+                    <div class="skill-card" data-skill="javascript">
+                        <i class="fab fa-js"></i>
+                        <span>javascript</span>
+                    </div>
+                    <div class="skill-card" data-skill="rest-apis">
+                        <i class="fas fa-server"></i>
+                        <span>REST APIs</span>
+                    </div>
+                    <div class="skill-card" data-skill="microservices">
+                        <i class="fas fa-cogs"></i>
+                        <span>Microservices</span>
+                    </div>
+                    <div class="skill-card" data-skill="graphql">
+                        <i class="fas fa-network-wired"></i>
+                        <span>GraphQL</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frontend Development Row -->
+            <div class="skill-row">
+                <h3 class="row-title">Frontend Development</h3>
+                <div class="skills-row-grid">
+                    <!-- <div class="skill-card" data-skill="react">
+                        <i class="fab fa-react"></i>
+                        <span>React</span>
+                    </div> -->
+                    <!-- <div class="skill-card" data-skill="javascript">
+                        <i class="fab fa-js-square"></i>
+                        <span>JavaScript</span>
+                    </div> -->
+                    <div class="skill-card" data-skill="javascript">
+                        <i class="fab fa-angular"></i>
+                        <span>Angular.js</span>
+                    </div>
+                    <div class="skill-card" data-skill="nextjs">
+                        <i class="fas fa-cube"></i>
+                        <span>three.js</span>
+                    </div>
+                    <div class="skill-card" data-skill="html5">
+                        <i class="fab fa-html5"></i>
+                        <span>HTML5</span>
+                    </div>
+                    <div class="skill-card" data-skill="css3">
+                        <i class="fab fa-css3-alt"></i>
+                        <span>CSS3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Technologies Row -->
+            <div class="skill-row">
+                <h3 class="row-title">Database Technologies</h3>
+                <div class="skills-row-grid">
+                    <div class="skill-card" data-skill="postgresql">
+                        <i class="fas fa-database"></i>
+                        <span>PostgreSQL</span>
+                    </div>
+                    <div class="skill-card" data-skill="snowflake">
+                        <i class="fas fa-snowflake"></i>
+                        <span>Snowflake</span>
+                    </div>
+                    <div class="skill-card" data-skill="mongodb">
+                        <i class="fas fa-leaf"></i>
+                        <span>MongoDB</span>
+                    </div>
+                    <div class="skill-card" data-skill="redis">
+                        <i class="fas fa-memory"></i>
+                        <span>Redis</span>
+                    </div>
+                    <div class="skill-card" data-skill="mysql">
+                        <i class="fas fa-database"></i>
+                        <span>MySQL</span>
+                    </div>
+                    <div class="skill-card" data-skill="data-pipeline">
+                        <i class="fas fa-stream"></i>
+                        <span>Data Pipeline</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cloud & DevOps Row -->
+            <div class="skill-row">
+                <h3 class="row-title">Cloud & DevOps</h3>
+                <div class="skills-row-grid">
+                    <div class="skill-card" data-skill="aws">
+                        <i class="fab fa-aws"></i>
+                        <span>AWS</span>
+                    </div>
+                    <div class="skill-card" data-skill="azure">
+                        <i class="fab fa-microsoft"></i>
+                        <span>Azure</span>
+                    </div>
+                    <div class="skill-card" data-skill="docker">
+                        <i class="fab fa-docker"></i>
+                        <span>Docker</span>
+                    </div>
+                    <div class="skill-card" data-skill="kubernetes">
+                        <i class="fas fa-dharmachakra"></i>
+                        <span>Kubernetes</span>
+                    </div>
+                    <!-- <div class="skill-card" data-skill="terraform">
+                        <i class="fas fa-cube"></i>
+                        <span>Terraform</span>
+                    </div> -->
+                    <div class="skill-card" data-skill="cicd">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>CI/CD</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Version Control & Management Row -->
+            <div class="skill-row">
+                <h3 class="row-title">Version Control & Management</h3>
+                <div class="skills-row-grid">
+                    <div class="skill-card" data-skill="git">
+                        <i class="fab fa-git-alt"></i>
+                        <span>Git</span>
+                    </div>
+                    <div class="skill-card" data-skill="github">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub</span>
+                    </div>
+                    <div class="skill-card" data-skill="jira">
+                        <i class="fas fa-tasks"></i>
+                        <span>Jira</span>
+                    </div>
+                    <div class="skill-card" data-skill="agile">
+                        <i class="fas fa-running"></i>
+                        <span>Agile</span>
+                    </div>
+                    <div class="skill-card" data-skill="scrum">
+                        <i class="fas fa-users"></i>
+                        <span>Scrum</span>
+                    </div>
+                    <div class="skill-card" data-skill="project-management">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>Project Management</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Row -->
+            <div class="skill-row">
+                <h3 class="row-title">Learning (In progress)</h3>
+                <div class="skills-row-grid">
+                    <div class="skill-card" data-skill="Rust">
+                        <i class="fab fa-rust"></i>
+                        <span>Rust</span>
+                    </div>
+                    <div class="skill-card" data-skill="golang">
+                        <i class="fas fa-code"></i>
+                        <span>golang</span>
+                    </div>
+                    <div class="skill-card" data-skill="langgraph">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>langgraph</span>
+                    </div>
+                    <div class="skill-card" data-skill="mlOps">
+                        <i class="fas fa-cogs"></i>
+                        <span>MLOps</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+
+    <section class="contact reveal" id="contact">
+        <div class="container">
+            <h2 class="section-title">Let's Connect</h2>
+            <div class="contact-content">
+                <p class="contact-description">
+                    I'm always interested in discussing new opportunities, 
+                    innovative projects, or just having a chat about AI and technology.
+                </p>
+                <div class="contact-methods">
+                    <a href="mailto:ayushhars@gmail.com" class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>Mail Me</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/aayushkmishra" class="contact-item">
+                        <i class="fab fa-linkedin"></i>
+                        <span>LinkedIn</span>
+                    </a>
+                    <a href="https://github.com/dragonstorm0" class="contact-item">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resume Modal -->
+    <div id="resumeModal" class="resume-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-file-pdf"></i>
+                    Aayush Kumar Mishra - Resume
+                </h3>
+                <div class="modal-controls">
+                    <a href="https://drive.google.com/uc?export=download&id=1q_NzwYUs6JCO13k73l2ZvPncUTUaIApS" download class="btn btn-download-modal">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </a>
+                    <button class="modal-close" onclick="closeResumeModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <iframe id="resumeIframe" 
+                        src="" 
+                        width="100%" 
+                        height="100%" 
+                        frameborder="0">
+                </iframe>
+                <div class="iframe-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Loading resume...
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop" onclick="closeResumeModal()"></div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Aayush Kumar Mishra. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
