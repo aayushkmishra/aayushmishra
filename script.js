@@ -682,7 +682,7 @@ function openResumeModal() {
     }, 10);
     
     // Set iframe source - try embedded version first
-    const fileId = '1q_NzwYUs6JCO13k73l2ZvPncUTUaIApS';
+    const fileId = '1guk7j8RtaEwuZC6HolMjGTYWaj-jfCVM';
     const resumeEmbedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
     
     // Alternative: Use the embedded viewer URL
