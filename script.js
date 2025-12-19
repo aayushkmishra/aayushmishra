@@ -682,11 +682,11 @@ function openResumeModal() {
     }, 10);
     
     // Set iframe source - try embedded version first
-    const fileId = '1guk7j8RtaEwuZC6HolMjGTYWaj-jfCVM';
+    const fileId = config.resumeFileId;
     const resumeEmbedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
     
-    // Alternative: Use the embedded viewer URL
-    // const resumeEmbedUrl = `https://docs.google.com/viewer?srcid=${fileId}&pid=explorer&efh=false&a=v&chrome=false&embedded=true`;
+    // Set download link
+    document.getElementById('downloadBtn').href = `https://drive.google.com/uc?export=download&id=${fileId}`;
     
     iframe.src = resumeEmbedUrl;
     
