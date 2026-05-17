@@ -863,7 +863,7 @@ section {
 
 /* Experience Section */
 .experience-timeline {
-    max-width: 800px;
+    max-width: 1120px;
     margin: 0 auto;
     position: relative;
 }
@@ -871,7 +871,7 @@ section {
 .experience-timeline::before {
     content: '';
     position: absolute;
-    left: 50%;
+    left: 250px;
     top: 0;
     bottom: 0;
     width: 2px;
@@ -881,16 +881,17 @@ section {
 
 .experience-item {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 230px minmax(0, 1fr);
     gap: 3rem;
     margin-bottom: 3rem;
     position: relative;
+    align-items: start;
 }
 
 .experience-item::before {
     content: '';
     position: absolute;
-    left: 50%;
+    left: 250px;
     top: 2rem;
     width: 15px;
     height: 15px;
@@ -906,10 +907,17 @@ section {
     color: var(--accent-primary);
     font-weight: 600;
     font-size: 1.1rem;
+    line-height: 1.4;
 }
 
 .experience-content {
-    padding-left: 2rem;
+    min-width: 0;
+    padding: 1.75rem;
+    background: var(--surface-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.16);
+    backdrop-filter: blur(16px);
 }
 
 .experience-content h3 {
@@ -926,8 +934,9 @@ section {
 
 .experience-content p {
     color: var(--text-secondary);
-    margin-bottom: 1rem;
-    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    line-height: 1.7;
+    max-width: 820px;
 }
 
 .experience-content ul {
@@ -937,9 +946,10 @@ section {
 
 .experience-content li {
     color: var(--text-secondary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.85rem;
     position: relative;
     padding-left: 1.5rem;
+    line-height: 1.65;
 }
 
 .experience-content li::before {
@@ -1753,7 +1763,7 @@ section {
     }
 
     .experience-content {
-        padding-left: 0;
+        padding: 1.25rem;
     }
 
     .projects-grid {

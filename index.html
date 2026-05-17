@@ -38,7 +38,6 @@
             </div>
             <ul class="nav-menu">
                 <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
                 <li><a href="#skills" class="nav-link">Skills</a></li>
                 <li><a href="#experience" class="nav-link">Experience</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
@@ -74,7 +73,7 @@
                         Engineer at the intersection of scalable systems and artificial intelligence. I craft backend solutions, APIs, and RAG-driven architectures that power real-world AI applications. Skilled in Python, system design, and ML/GenAI pipelines, I bring a balance of technical depth and practical problem-solving to every project.
                     </p>
                     <div class="hero-buttons">
-                        <a href="#projects" class="btn btn-primary">View My Work</a>
+                        <a href="#experience" class="btn btn-primary">View Experience</a>
                         <a href="#contact" class="btn btn-secondary">Get In Touch</a>
                         <button class="btn btn-download" onclick="openResumeModal()">
                             <i class="fas fa-file-pdf"></i>
@@ -172,31 +171,41 @@
             <h2 class="section-title">Experience</h2>
             <div class="experience-timeline">
                 <div class="experience-item">
-                    <div class="experience-date">Jul 2025 - Present</div>
+                    <div class="experience-date">Jun 2025 - May 2026</div>
                     <div class="experience-content">
-                        <h3>SDE - II (AI)</h3>
+                        <h3>SDE - II</h3>
                         <h4>Innovaccer Inc.</h4>
                         <p>
-                            Leading the development of cutting-edge agentic AI and generative AI solutions.
-                            Architecting intelligent healthcare data platforms that revolutionize patient care through AI-driven insights.
+                            Built production-grade ingestion, orchestration, and agentic AI workflows for healthcare data platforms,
+                            focusing on scalable pipelines, governed data operations, and reliable high-throughput processing.
                         </p>
                         <ul>
-                            <li>Designing robust ML solutions for datastore cost optimization and automated workflows.</li>
-                            <li>Developed REST APIs using Flask and FastAPI for healthcare industry applications.</li>
-                            <li>Designing API endpoints for scalable backend services, ensuring reliability and performance.</li>
-                            <li>Integrated APIs with data platforms and datastores including PostgreSQL, Snowflake, and Redis.</li>
-                            <li>Collaborated on backend architecture planning to support healthcare data workflows.</li>
-                            <li>Looking forward to keep contributing and learning more about complex system design application and Agentic integration in healthcare sector.</li>
+                            <li>Built a Scala-based dataset pattern recommendation system for ingestion pipelines using Athena metadata, schema-aware file clustering, incremental fetch tracking, partition normalization, and confidence-scored glob generation.</li>
+                            <li>Integrated GenAI for pattern inference and conflict resolution with local fallback, existing-pattern context, sample-file validation, retry logic, and manual warnings for risky dataset-in-use conflicts.</li>
+                            <li>Implemented production-grade job orchestration with SQS message deduplication, MongoDB job tracking, pod heartbeats, zombie takeover, parallel cluster processing, optimistic locking, atomic updates, and category enrichment.</li>
+                            <li>Extended Snowflake-first Scala and Python data pipelines to Databricks with service-principal authentication, PAT fallback, Unity Catalog integration, metastore-aware writes, external locations, governed table operations, and strict date/timestamp safeguards.</li>
+                            <li>Designed ingestion enhancements for Kafka metadata size limits through in-payload optimization, compression, chunking, and cloud-backed Avro offloading for oversized metadata.</li>
+                            <li>Improved parallel incremental ingestion for S3 and ADLS archive and destination flows, enabling higher-throughput processing and safer handling of large metadata payloads.</li>
+                            <li>Integrated multiple agentic workflows across the product lifecycle to support low-latency inference and scalable high-throughput pipelines.</li>
                         </ul>
                         <div class="tech-stack">
                             <span class="tech-chip">Python</span>
+                            <span class="tech-chip">Scala</span>
                             <!-- <span class="tech-chip">Go Lang</span> -->
                             <!-- <span class="tech-chip">MCP</span> -->
                             <span class="tech-chip">Gen AI</span>
                             <span class="tech-chip">Snowflake</span>
+                            <span class="tech-chip">Databricks</span>
+                            <span class="tech-chip">Athena</span>
+                            <span class="tech-chip">Kafka</span>
                             <span class="tech-chip">PostgreSQL</span>
+                            <span class="tech-chip">MongoDB</span>
+                            <span class="tech-chip">SQS</span>
+                            <span class="tech-chip">Avro</span>
                             <span class="tech-chip">AWS</span>
                             <span class="tech-chip">Azure</span>
+                            <span class="tech-chip">S3</span>
+                            <span class="tech-chip">ADLS</span>
                             <span class="tech-chip">REST</span>
                             <span class="tech-chip">Kubernetes</span>
                             <span class="tech-chip">ML</span>    
@@ -394,6 +403,14 @@
                         <i class="fas fa-comments"></i>
                         <span>MCP</span>
                     </div>
+                    <div class="skill-card" data-skill="agentic-llm">
+                        <i class="fas fa-network-wired"></i>
+                        <span>Agentic LLM</span>
+                    </div>
+                    <div class="skill-card" data-skill="rag">
+                        <i class="fas fa-search"></i>
+                        <span>RAG</span>
+                    </div>
                     <!-- <div class="skill-card" data-skill="python-ml">
                         <i class="fab fa-python"></i>
                         <span>Python</span>
@@ -405,6 +422,10 @@
                     <div class="skill-card" data-skill="LangChain">
                         <i class="fas fa-chain"></i>
                         <span>LangChain</span>
+                    </div>
+                    <div class="skill-card" data-skill="langgraph">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>LangGraph</span>
                     </div>
                     <div class="skill-card" data-skill="PyTorch">
                         <i class="fas fa-fire"></i>
@@ -426,6 +447,14 @@
                         <i class="fab fa-java"></i>
                         <span>Java</span>
                     </div>
+                    <div class="skill-card" data-skill="cpp">
+                        <i class="fas fa-code"></i>
+                        <span>C++</span>
+                    </div>
+                    <div class="skill-card" data-skill="scala">
+                        <i class="fas fa-terminal"></i>
+                        <span>Scala</span>
+                    </div>
                     <!-- <div class="skill-card" data-skill="golang">
                         <i class="fas fa-code"></i>
                         <span>Go Lang</span>
@@ -437,6 +466,10 @@
                     <div class="skill-card" data-skill="rest-apis">
                         <i class="fas fa-server"></i>
                         <span>REST APIs</span>
+                    </div>
+                    <div class="skill-card" data-skill="soap">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>SOAP</span>
                     </div>
                     <div class="skill-card" data-skill="microservices">
                         <i class="fas fa-cogs"></i>
@@ -453,10 +486,10 @@
             <div class="skill-row">
                 <h3 class="row-title">Frontend Development</h3>
                 <div class="skills-row-grid">
-                    <!-- <div class="skill-card" data-skill="react">
+                    <div class="skill-card" data-skill="react">
                         <i class="fab fa-react"></i>
                         <span>React</span>
-                    </div> -->
+                    </div>
                     <!-- <div class="skill-card" data-skill="javascript">
                         <i class="fab fa-js-square"></i>
                         <span>JavaScript</span>
@@ -480,9 +513,9 @@
                 </div>
             </div>
 
-            <!-- Database Technologies Row -->
+            <!-- Data Platforms & Databases Row -->
             <div class="skill-row">
-                <h3 class="row-title">Database Technologies</h3>
+                <h3 class="row-title">Data Platforms & Databases</h3>
                 <div class="skills-row-grid">
                     <div class="skill-card" data-skill="postgresql">
                         <i class="fas fa-database"></i>
@@ -491,6 +524,10 @@
                     <div class="skill-card" data-skill="snowflake">
                         <i class="fas fa-snowflake"></i>
                         <span>Snowflake</span>
+                    </div>
+                    <div class="skill-card" data-skill="databricks">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Databricks</span>
                     </div>
                     <div class="skill-card" data-skill="mongodb">
                         <i class="fas fa-leaf"></i>
@@ -503,6 +540,18 @@
                     <div class="skill-card" data-skill="mysql">
                         <i class="fas fa-database"></i>
                         <span>MySQL</span>
+                    </div>
+                    <div class="skill-card" data-skill="oracle-db">
+                        <i class="fas fa-database"></i>
+                        <span>Oracle DB</span>
+                    </div>
+                    <div class="skill-card" data-skill="influxdb">
+                        <i class="fas fa-chart-line"></i>
+                        <span>InfluxDB</span>
+                    </div>
+                    <div class="skill-card" data-skill="kafka">
+                        <i class="fas fa-stream"></i>
+                        <span>Kafka</span>
                     </div>
                     <div class="skill-card" data-skill="data-pipeline">
                         <i class="fas fa-stream"></i>
@@ -519,6 +568,22 @@
                         <i class="fab fa-aws"></i>
                         <span>AWS</span>
                     </div>
+                    <div class="skill-card" data-skill="aws-s3">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>AWS S3</span>
+                    </div>
+                    <div class="skill-card" data-skill="aws-eks">
+                        <i class="fas fa-dharmachakra"></i>
+                        <span>AWS EKS</span>
+                    </div>
+                    <div class="skill-card" data-skill="aws-sqs">
+                        <i class="fas fa-inbox"></i>
+                        <span>AWS SQS</span>
+                    </div>
+                    <div class="skill-card" data-skill="aws-bedrock">
+                        <i class="fas fa-brain"></i>
+                        <span>AWS Bedrock</span>
+                    </div>
                     <div class="skill-card" data-skill="azure">
                         <i class="fab fa-microsoft"></i>
                         <span>Azure</span>
@@ -530,6 +595,10 @@
                     <div class="skill-card" data-skill="kubernetes">
                         <i class="fas fa-dharmachakra"></i>
                         <span>Kubernetes</span>
+                    </div>
+                    <div class="skill-card" data-skill="argo-cd">
+                        <i class="fas fa-route"></i>
+                        <span>Argo CD</span>
                     </div>
                     <!-- <div class="skill-card" data-skill="terraform">
                         <i class="fas fa-cube"></i>
@@ -544,7 +613,7 @@
 
             <!-- Version Control & Management Row -->
             <div class="skill-row">
-                <h3 class="row-title">Version Control & Management</h3>
+                <h3 class="row-title">Tools, Version Control & Management</h3>
                 <div class="skills-row-grid">
                     <div class="skill-card" data-skill="git">
                         <i class="fab fa-git-alt"></i>
@@ -569,6 +638,26 @@
                     <div class="skill-card" data-skill="project-management">
                         <i class="fas fa-project-diagram"></i>
                         <span>Project Management</span>
+                    </div>
+                    <div class="skill-card" data-skill="kloudfuse">
+                        <i class="fas fa-chart-area"></i>
+                        <span>Kloudfuse</span>
+                    </div>
+                    <div class="skill-card" data-skill="power-automate">
+                        <i class="fas fa-bolt"></i>
+                        <span>Power Automate</span>
+                    </div>
+                    <div class="skill-card" data-skill="power-bi">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Power BI</span>
+                    </div>
+                    <div class="skill-card" data-skill="bold-bi">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>BOLD BI</span>
+                    </div>
+                    <div class="skill-card" data-skill="grafana">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Grafana</span>
                     </div>
                 </div>
             </div>
