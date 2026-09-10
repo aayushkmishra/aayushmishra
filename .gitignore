@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors / tooling
+.vscode/
+.idea/
+.claude/
+*.swp
+
+# Local scratch
+*.zip
+*.log

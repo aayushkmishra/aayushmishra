@@ -6,7 +6,7 @@
     <title>Aayush Kumar Mishra - AI/ML & Backend Developer</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea'/%3E%3Cstop offset='100%25' style='stop-color:%23764ba2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='6' fill='url(%23grad)'/%3E%3Cpath d='M8 24 L16 8 L24 24 M11 20 L21 20' stroke='white' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -37,11 +37,14 @@
                 </div>
             </div>
             <ul class="nav-menu">
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#skills" class="nav-link">Skills</a></li>
-                <li><a href="#experience" class="nav-link">Experience</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li><a href="#current-build" class="nav-link">Building</a></li>
+                    <li><a href="#experience" class="nav-link">Experience</a></li>
+                    <li><a href="#featured-work" class="nav-link">Work</a></li>
+                    <li><a href="#skills" class="nav-link">Skills</a></li>
+                    <li><a href="#certifications" class="nav-link">Certifications</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
             <div class="nav-actions">
                 <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
                     <div class="theme-toggle-track">
@@ -64,16 +67,25 @@
         <div class="hero-container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h2 class="hero-greeting">Hey, I'm Aayush 👋</h2>
+                    <h2 class="hero-greeting">Hey, I'm <span class="hero-name">Aayush</span> 👋</h2>
                     <div class="hero-title-container">
-                        <h1 class="hero-title-main">Software Engineer</h1>
-                        <h2 class="hero-title-sub">Data Enthusiast & AI/ML Developer</h2>
+                        <h1 class="hero-title-main">Senior Backend Engineer</h1>
+                        <h2 class="hero-title-sub">Building AI-powered platforms and scalable data systems</h2>
                     </div>
                     <p class="hero-description">
-                        Engineer at the intersection of scalable systems and artificial intelligence. I craft backend solutions, APIs, and RAG-driven architectures that power real-world AI applications. Skilled in Python, system design, and ML/GenAI pipelines, I bring a balance of technical depth and practical problem-solving to every project.
+                        Senior Backend Engineer with 5+ years building scalable SaaS platforms, distributed data pipelines, and production ML/LLM systems. I work across Python services, REST and inference APIs, cloud data platforms, GenAI/RAG workflows, MCP, OCR extraction, and resilient enterprise systems.
                     </p>
+                    <div class="hero-proof">
+                        <span>5+ years</span>
+                        <span>Backend engineering</span>
+                        <span>GenAI/RAG</span>
+                        <span>Distributed systems</span>
+                        <span>Microservices</span>
+                        <span>System design</span>
+                    </div>
                     <div class="hero-buttons">
                         <a href="#experience" class="btn btn-primary">View Experience</a>
+                        <a href="#featured-work" class="btn btn-secondary">Featured Work</a>
                         <a href="#contact" class="btn btn-secondary">Get In Touch</a>
                         <button class="btn btn-download" onclick="openResumeModal()">
                             <i class="fas fa-file-pdf"></i>
@@ -89,6 +101,28 @@
                     </div>
                 </div>
             </div>
+            <div class="impact-strip">
+                <div class="impact-item profile-signal">
+                    <i class="fas fa-sitemap"></i>
+                    <h3>System Architecture</h3>
+                    <p>DAG workflows, async queues, caching layers, and service-bus orchestration for resilient production systems.</p>
+                </div>
+                <div class="impact-item profile-signal">
+                    <i class="fas fa-server"></i>
+                    <h3>Backend Engineering</h3>
+                    <p>Python microservices, REST and inference APIs, Django, FastAPI, and scalable data-service platforms.</p>
+                </div>
+                <div class="impact-item profile-signal">
+                    <i class="fas fa-brain"></i>
+                    <h3>AI/Data Platforms</h3>
+                    <p>Bedrock, RAG, OCR extraction, vector databases, Databricks, Snowflake, and ML-driven workflows.</p>
+                </div>
+                <div class="impact-item profile-signal">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Production Ownership</h3>
+                    <p>CI/CD, Kubernetes, observability, release governance, schema safeguards, and reliability-first delivery.</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -99,17 +133,20 @@
                 <div class="about-main">
                     <div class="about-intro">
                         <div class="intro-header">
-                            <h3>Hello, I'm Aayush! 👋</h3>
-                            <p class="intro-subtitle">Developer & AI/ML Enthusias</p>
+                            <h3>I build the seam between data platforms and the models that run on them</h3>
+                            <p class="intro-subtitle">Backend architecture · Distributed data · Applied AI</p>
                         </div>
                         
                         <div class="intro-text">
                             <p>
-                                I'm a passionate technologist who loves building intelligent systems and scalable backend solutions. My expertise spans backend engineering, data pipelines, and AI/ML, with a strong focus on Generative AI, retrieval-augmented generation (RAG), and agentic workflows.
+                                I design systems, not just services. Most of what I own starts as a question about boundaries: what belongs in a request path and what belongs behind a queue, where state is allowed to live, which failures a caller should ever see. I work mainly in <strong>Python and Scala</strong>, across distributed data pipelines, service architecture, and the orchestration that holds the whole thing together.
                             </p>
                             <p>
-                                With experience across the stack, I enjoy creating end-to-end solutions that combine robust system design with modern AI capabilities. Recently, I’ve been working on cloud-native architectures, data engineering, and deploying production-ready applications that bridge backend performance with AI innovation.
+                                The stack follows from those decisions rather than the other way round. Kubernetes and Docker for the runtime, AWS and Azure underneath, Kafka, SQS and Service Bus wherever work should be asynchronous, and Snowflake, Databricks, PostgreSQL, MongoDB, Redis or Cosmos DB depending on the access pattern. What I actually spend my judgement on is <strong>idempotency, caching strategy, back pressure and observability</strong>, because those are what decide whether a system survives its second year.
                             </p>
+                            <p>
+                            A growing part of that architecture is <strong>LLM inference</strong>. I treat a model as one more unreliable dependency with a latency budget and a failure mode: batching and caching to keep inference cost predictable, streaming where someone is waiting, fallbacks for when a provider degrades, <strong>guardrails</strong> on what a model is allowed to return, and <strong>evals</strong> that run before a prompt change ships rather than after. I build RAG pipelines, document extraction workflows and agentic systems where the model does the fuzzy reasoning and deterministic services own everything that has to be correct. Knowing exactly where to put that boundary is the real engineering work.
+                        </p>
                         </div>
 
                         <div class="about-stats">
@@ -166,6 +203,107 @@
         </div>
     </section>
 
+    <section class="current-build reveal" id="current-build">
+        <div class="container">
+            <div class="current-build-layout">
+                <div class="current-build-copy">
+                    <span class="section-kicker">Currently Building</span>
+                    <h2>Referral intelligence for healthcare workflows</h2>
+                    <p>
+                        Building a configurable healthcare data pipeline that handles fax, email, and manual intake;
+                        runs Gemini OCR and Bedrock-backed extraction; writes editable metadata back into Cosmos DB;
+                        and drives downstream DAG stages for benefit verification, prior authorization, provider and
+                        patient communication, autonomous calling, and scheduling.
+                    </p>
+                </div>
+                <div class="build-flow-visual">
+                    <svg class="bf-diagram" viewBox="0 0 620 326" role="img" aria-labelledby="bfTitle bfDesc" preserveAspectRatio="xMidYMid meet">
+                      <title id="bfTitle">Referral intake to scheduling pipeline</title>
+                      <desc id="bfDesc">Fax, email and manual intake feed a Service Bus queue. Configurable extraction runs Gemini OCR and AWS Bedrock, results persist to Cosmos DB as editable metadata, a human review step gates the output, and a DAG fans out to benefit verification, prior authorization, provider communication, autonomous calling and scheduling.</desc>
+                      <g class="bf-intake">
+                        <rect class="bf-chip" x="8" y="43.0" width="84" height="26" rx="13"/>
+                        <text class="bf-chip-t" x="50.0" y="59.4">Fax</text>
+                        <path class="bf-rail" d="M 92 56.0 H 100 Q 106 56.0 106 62.0 V 92"/>
+                        <rect class="bf-chip" x="8" y="79.0" width="84" height="26" rx="13"/>
+                        <text class="bf-chip-t" x="50.0" y="95.4">Email</text>
+                        <path class="bf-rail" d="M 92 92.0 H 106"/>
+                        <rect class="bf-chip" x="8" y="115.0" width="84" height="26" rx="13"/>
+                        <text class="bf-chip-t" x="50.0" y="131.4">Manual</text>
+                        <path class="bf-rail" d="M 92 128.0 H 100 Q 106 128.0 106 122.0 V 92"/>
+                        <path class="bf-rail" d="M 106 92 H 116"/>
+                      </g>
+                      <g class="bf-node" style="--d:0.50s">
+                        <rect class="bf-box" x="116" y="65.0" width="86" height="54" rx="10"/>
+                        <text class="bf-title" x="159.0" y="88.0">Queue</text>
+                        <text class="bf-sub-t" x="159.0" y="103.0">Service Bus</text>
+                      </g>
+                      <path class="bf-rail" d="M 202 92 H 220"/>
+                      <path class="bf-arrow" d="M 220 92 l -5 -3.5 v 7 z"/>
+                      <g class="bf-node" style="--d:1.67s">
+                        <rect class="bf-box" x="220" y="52.0" width="126" height="80" rx="10"/>
+                        <text class="bf-title" x="283.0" y="70.0">Extract</text>
+                        <text class="bf-badge" x="283.0" y="83.0">CONFIGURABLE</text>
+                        <rect class="bf-sub" x="230" y="92.0" width="106" height="15" rx="7.5"/>
+                        <text class="bf-sub-t" x="283.0" y="102.8">Gemini OCR</text>
+                        <rect class="bf-sub" x="230" y="111.0" width="106" height="15" rx="7.5"/>
+                        <text class="bf-sub-t" x="283.0" y="121.8">AWS Bedrock</text>
+                      </g>
+                      <path class="bf-rail" d="M 346 92 H 364"/>
+                      <path class="bf-arrow" d="M 364 92 l -5 -3.5 v 7 z"/>
+                      <g class="bf-node" style="--d:2.95s">
+                        <rect class="bf-box" x="364" y="65.0" width="110" height="54" rx="10"/>
+                        <text class="bf-title" x="419.0" y="88.0">Persist</text>
+                        <text class="bf-sub-t" x="419.0" y="103.0">Cosmos DB</text>
+                      </g>
+                      <path class="bf-rail" d="M 474 92 H 492"/>
+                      <path class="bf-arrow" d="M 492 92 l -5 -3.5 v 7 z"/>
+                      <g class="bf-node" style="--d:4.20s">
+                        <rect class="bf-box" x="492" y="65.0" width="120" height="54" rx="10"/>
+                        <text class="bf-title" x="552.0" y="88.0">Review</text>
+                        <text class="bf-sub-t" x="552.0" y="103.0">Human in loop</text>
+                      </g>
+                      <path class="bf-rail bf-rail-dim" d="M 552.0 119 V 194 Q 552.0 206 540.0 206 H 52.0 Q 64.0 206 64.0 218 V 236"/>
+                      <g class="bf-node bf-dag">
+                        <rect class="bf-box" x="8.0" y="236" width="112" height="56" rx="10"/>
+                        <text class="bf-dag-t" x="64.0" y="260">Benefit</text>
+                        <text class="bf-dag-t" x="64.0" y="274">verification</text>
+                      </g>
+                      <path class="bf-rail bf-rail-dim" d="M 552.0 119 V 194 Q 552.0 206 540.0 206 H 175.0 Q 187.0 206 187.0 218 V 236"/>
+                      <g class="bf-node bf-dag">
+                        <rect class="bf-box" x="131.0" y="236" width="112" height="56" rx="10"/>
+                        <text class="bf-dag-t" x="187.0" y="260">Prior</text>
+                        <text class="bf-dag-t" x="187.0" y="274">authorization</text>
+                      </g>
+                      <path class="bf-rail bf-rail-dim" d="M 552.0 119 V 194 Q 552.0 206 540.0 206 H 298.0 Q 310.0 206 310.0 218 V 236"/>
+                      <g class="bf-node bf-dag">
+                        <rect class="bf-box" x="254.0" y="236" width="112" height="56" rx="10"/>
+                        <text class="bf-dag-t" x="310.0" y="260">Provider</text>
+                        <text class="bf-dag-t" x="310.0" y="274">comms</text>
+                      </g>
+                      <path class="bf-rail bf-rail-dim" d="M 552.0 119 V 194 Q 552.0 206 540.0 206 H 421.0 Q 433.0 206 433.0 218 V 236"/>
+                      <g class="bf-node bf-dag">
+                        <rect class="bf-box" x="377.0" y="236" width="112" height="56" rx="10"/>
+                        <text class="bf-dag-t" x="433.0" y="260">Autonomous</text>
+                        <text class="bf-dag-t" x="433.0" y="274">calling</text>
+                      </g>
+                      <path class="bf-rail bf-rail-dim" d="M 552.0 119 V 194 Q 552.0 206 564.0 206 H 568.0 Q 556.0 206 556.0 218 V 236"/>
+                      <g class="bf-node bf-dag">
+                        <rect class="bf-box" x="500.0" y="236" width="112" height="56" rx="10"/>
+                        <text class="bf-dag-t" x="556.0" y="267">Scheduling</text>
+                      </g>
+                      <circle class="bf-packet" r="4" style="--path:path('M 106 92 H 552.0')"/>
+                      <circle class="bf-packet bf-packet-branch" r="3" style="--path:path('M 552.0 119 V 194 Q 552.0 206 540.0 206 H 52.0 Q 64.0 206 64.0 218 V 236')"/>
+                      <circle class="bf-packet bf-packet-branch" r="3" style="--path:path('M 552.0 119 V 194 Q 552.0 206 540.0 206 H 175.0 Q 187.0 206 187.0 218 V 236')"/>
+                      <circle class="bf-packet bf-packet-branch" r="3" style="--path:path('M 552.0 119 V 194 Q 552.0 206 540.0 206 H 298.0 Q 310.0 206 310.0 218 V 236')"/>
+                      <circle class="bf-packet bf-packet-branch" r="3" style="--path:path('M 552.0 119 V 194 Q 552.0 206 540.0 206 H 421.0 Q 433.0 206 433.0 218 V 236')"/>
+                      <circle class="bf-packet bf-packet-branch" r="3" style="--path:path('M 552.0 119 V 194 Q 552.0 206 564.0 206 H 568.0 Q 556.0 206 556.0 218 V 236')"/>
+                    </svg>
+                    <p class="sr-only">Config-driven referral pipeline from intake sources through orchestration, Gemini OCR, Bedrock extraction, Redis enrichment, Cosmos DB writeback, review UI, benefit verification, prior authorization, provider and patient communication, and scheduling.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="experience reveal" id="experience">
         <div class="container">
             <h2 class="section-title">Experience</h2>
@@ -178,12 +316,14 @@
                         <p>
                             Taking ownership of engineering responsibilities across healthcare and senior-living applications,
                             with a focus on data modules, platform workflows, and full-stack systems that support data-driven
-                            product capabilities.
+                            product capabilities, including referral extraction workflows powered by Bedrock-integrated data
+                            extraction systems.
                         </p>
                         <ul>
-                            <li>Designed and streamlined the end-to-end deployment lifecycle, strengthening release governance, environment readiness, and multi-cloud deployment practices.</li>
-                            <li>Designed scalable platform architecture across performance, reliability, and workflow orchestration using TTL caching, scaled precomputation, service-bus-backed asynchronous processing, and agentic DAG flows.</li>
-                            <li>Built data-intensive analytics dashboards with 30+ chart visualizations, interactive drilldowns, and extensive query capabilities for healthcare and senior-living workflows.</li>
+                            <li>Streamlined the end-to-end deployment lifecycle, strengthening release governance, CI/CD, environment readiness, and multi-cloud deployment practices.</li>
+                            <li>Architected scalable platform workflows using Redis TTL caching, scaled precomputation, service-bus-backed asynchronous processing, and agentic LLM DAG flows.</li>
+                            <li>Building referral extraction systems that combine healthcare document workflows, structured data extraction, and AWS Bedrock integration to turn unstructured referral inputs into usable product data.</li>
+                            <li>Built data-intensive analytics dashboards with 30+ chart visualizations, interactive drilldowns, optimized queries, and data-quality monitoring for healthcare workflows.</li>
                         </ul>
                         <div class="tech-stack">
                             <span class="tech-chip">Python</span>
@@ -198,6 +338,8 @@
                             <span class="tech-chip">Azure DevOps</span>
                             <span class="tech-chip">Databricks</span>
                             <span class="tech-chip">Kubernetes</span>
+                            <span class="tech-chip">AWS Bedrock</span>
+                            <span class="tech-chip">Data Extraction</span>
                             <span class="tech-chip">Agentic AI</span>
                         </div>
                     </div>
@@ -252,50 +394,57 @@
                         <h3>Lead Software Engineer : DS/ML</h3>
                         <h4>SIRION</h4>
                         <p>
-                            Specialized in building robust backend systems and APIs for enterprise-level applications. 
-                            Focused on microservices architecture and cloud-native development practices.
-                            Developed scalable solution with integartion GEN AI and RAG based architectures to deliver intelligent solutions.
+                            Led SaaS development projects across Python REST frameworks, AWS, big data, containerization,
+                            document intelligence, and GenAI workflows for enterprise contract platforms.
                         </p>
                         <ul>
-                            <li>Designed and implemented RESTful APIs serving 500k+ requests daily.</li>
-                            <li>Integrated multiple RAG based pipelines with REST Framework and streaming for highly available intelligent solution.</li>
-                            <li>Delivering Optimized Automated Prdouct wrappers for customized solution saving customer onboarding time and streaming solution.</li>
+                            <li>Reduced customer onboarding time by over 85% by delivering service-based integrated SaaS solutions and event-driven webhook designs.</li>
+                            <li>Delivered AI/ML-driven document extraction and process automation with generative AI, saving 15,500+ hours and contributing over $2M in additional revenue.</li>
+                            <li>Enhanced PDF and scanned-document processing with OCR and ML models, improving processing speed by 30% while persisting extracted fields in PostgreSQL and MongoDB.</li>
+                            <li>Built logging, monitoring, and reporting for concurrent processes, reducing index complexity by 40% and improving observability and troubleshooting time.</li>
                         </ul>
                         <div class="tech-stack">
                             <span class="tech-chip">Python</span>
                             <span class="tech-chip">Java</span>
                             <span class="tech-chip">LLM</span>
+                            <span class="tech-chip">Gen AI</span>
+                            <span class="tech-chip">RAG</span>
+                            <span class="tech-chip">OCR</span>
+                            <span class="tech-chip">PostgreSQL</span>
                             <span class="tech-chip">MongoDB</span>
                             <span class="tech-chip">LangChain</span>
                             <span class="tech-chip">AWS</span>
-                            <span class="tech-chip">Mysql</span>
+                            <span class="tech-chip">Docker</span>
+                            <span class="tech-chip">Kubernetes</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="experience-item">
-                    <div class="experience-date">Jul 2021 - Nov 2023</div>
+                    <div class="experience-date">May 2021 - Nov 2023</div>
                     <div class="experience-content">
                         <h3>Software Engineer : Data services</h3>
                         <h4>BETSOL</h4>
                         <p>
-                            Developed end-to-end enterprise product applications using modern frameworks and technologies. 
-                            Gained comprehensive experience in both frontend and backend development.
+                            Delivered enterprise data-service products using React, JavaScript, Python, SQL, MongoDB,
+                            Bash scripting, and Azure, with a focus on scalable client-facing analytics and reporting systems.
                         </p>
                         <ul>
-                            <li>Designed and developed scalable web applications and microservices using React, JavaScript, Python, and SQL</li>
-                            <li>Built and optimized APIs, reducing development time by 30% through streamlined code management and reviews</li>
-                            <li>Integrated and managed databases including MongoDB and MySQL to support data-driven applications</li>
-                            <li>Collaborated directly with clients to deliver product solutions, driving efficiency improvements and system performance gains of over 20%</li>
-                            <li>Trained and mentored team members on technical stacks, best practices, and code optimization</li>
+                            <li>Designed and developed product scorecard and data-service applications serving 50+ clients and contributing to over $70M in FY 2022-23 revenue.</li>
+                            <li>Reduced API development time by 30% through efficient code management, streamlined reviews, and reusable backend patterns.</li>
+                            <li>Built microservices and data-driven insights through direct client engagement, saving 500+ hours across the user base and improving reporting workflows.</li>
+                            <li>Optimized API performance and database queries, boosting system efficiency by more than 20%.</li>
+                            <li>Reduced security vulnerabilities by 40% while mentoring engineers on code quality, best practices, and optimization.</li>
                         </ul>
                         <div class="tech-stack">
-                            <span class="tech-chip">Angular</span>
+                            <span class="tech-chip">React</span>
                             <span class="tech-chip">Python</span>
                             <span class="tech-chip">JavaScript</span>
+                            <span class="tech-chip">SQL</span>
                             <span class="tech-chip">MongoDB</span>
                             <span class="tech-chip">MySQL</span>
-                            <span class="tech-chip">Data Science</span>
+                            <span class="tech-chip">Azure</span>
+                            <span class="tech-chip">Bash</span>
                             <span class="tech-chip">REST</span>
                             <span class="tech-chip">Java</span>
                         </div>
@@ -328,96 +477,135 @@
             </div>
         </div>
     </section>
-<!-- 
-    <section class="projects reveal" id="projects">
+    <section class="featured-work reveal" id="featured-work">
         <div class="container">
-            <h2 class="section-title">Featured Projects</h2>
-            <div class="projects-grid">
-                <div class="project-card">
+            <h2 class="section-title">Featured Work</h2>
+            <div class="featured-grid">
+                <article class="work-card" data-case-study="referral">
                     <div class="project-image">
-                        <i class="fas fa-robot"></i>
+                        <i class="fas fa-file-medical-alt"></i>
                     </div>
                     <div class="project-content">
-                        <h3>Agentic AI System with MCP</h3>
+                        <span class="work-label">Healthcare AI</span>
+                        <h3>Referral Extraction System</h3>
                         <p>
-                            Developed an intelligent agent system using Model Context Protocol 
-                            for enhanced conversational AI with persistent context memory.
+                            Building Bedrock-integrated extraction workflows that transform unstructured referral inputs
+                            into structured product data for healthcare operations.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">AWS Bedrock</span>
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Data Extraction</span>
+                            <span class="tech-tag">Healthcare</span>
+                        </div>
+                        <button class="case-study-link" type="button">View Case Study</button>
+                    </div>
+                </article>
+
+                <article class="work-card" data-case-study="agentic-ingestion">
+                    <div class="project-image">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <div class="project-content">
+                        <span class="work-label">Data Platform</span>
+                        <h3>Agentic Ingestion Orchestration</h3>
+                        <p>
+                            Built resilient ingestion and recommendation workflows with confidence-aware pattern inference,
+                            human review routing, and distributed job orchestration.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Scala</span>
+                            <span class="tech-tag">SQS</span>
+                            <span class="tech-tag">MongoDB</span>
+                            <span class="tech-tag">Gen AI</span>
+                        </div>
+                        <button class="case-study-link" type="button">View Case Study</button>
+                    </div>
+                </article>
+
+                <article class="work-card" data-case-study="lakehouse">
+                    <div class="project-image">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="project-content">
+                        <span class="work-label">Lakehouse Engineering</span>
+                        <h3>Snowflake to Databricks Expansion</h3>
+                        <p>
+                            Extended Snowflake-first data pipelines to Databricks with governed Unity Catalog writes,
+                            metastore-aware operations, and strict schema safeguards.
                         </p>
                         <div class="project-tech">
                             <span class="tech-tag">Python</span>
-                            <span class="tech-tag">MCP</span>
-                            <span class="tech-tag">Gen AI</span>
-                            <span class="tech-tag">AWS</span>
+                            <span class="tech-tag">Scala</span>
+                            <span class="tech-tag">Snowflake</span>
+                            <span class="tech-tag">Databricks</span>
                         </div>
+                        <button class="case-study-link" type="button">View Case Study</button>
                     </div>
-                </div>
+                </article>
 
-                <div class="project-card">
+                <article class="work-card" data-case-study="analytics">
                     <div class="project-image">
                         <i class="fas fa-chart-line"></i>
                     </div>
                     <div class="project-content">
-                        <h3>Healthcare ML Analytics Platform</h3>
+                        <span class="work-label">Product Analytics</span>
+                        <h3>Healthcare Analytics Dashboard</h3>
                         <p>
-                            Built a comprehensive ML platform for healthcare data analysis 
-                            using Snowflake for data warehousing and PostgreSQL for operational data.
+                            Delivered data-intensive dashboards with 30+ visualizations, interactive drilldowns,
+                            optimized queries, and data-quality monitoring for healthcare workflows.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">TypeScript</span>
+                            <span class="tech-tag">Cosmos DB</span>
+                            <span class="tech-tag">Azure</span>
+                        </div>
+                        <button class="case-study-link" type="button">View Case Study</button>
+                    </div>
+                </article>
+
+                <article class="work-card" data-case-study="scorecard">
+                    <div class="project-image">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="project-content">
+                        <span class="work-label">Enterprise Scorecards</span>
+                        <h3>DAG-Based Scorecard Platform</h3>
+                        <p>
+                            Designed and scaled a production-grade data ingestion, prediction, dashboard, and scorecard
+                            system that contributed to ~$70M annual revenue.
                         </p>
                         <div class="project-tech">
                             <span class="tech-tag">Python</span>
-                            <span class="tech-tag">Snowflake</span>
-                            <span class="tech-tag">PostgreSQL</span>
-                            <span class="tech-tag">Azure</span>
+                            <span class="tech-tag">Django</span>
+                            <span class="tech-tag">FastAPI</span>
+                            <span class="tech-tag">Angular</span>
+                            <span class="tech-tag">Kendo UI</span>
+                            <span class="tech-tag">ML Prediction</span>
                         </div>
+                        <button class="case-study-link" type="button">View Case Study</button>
                     </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-image">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <div class="project-content">
-                        <h3>Scalable Backend API</h3>
-                        <p>
-                            Developed high-performance backend APIs using Go Lang with 
-                            cloud-native architecture for microservices deployment.
-                        </p>
-                        <div class="project-tech">
-                            <span class="tech-tag">Go</span>
-                            <span class="tech-tag">PostgreSQL</span>
-                            <span class="tech-tag">AWS</span>
-                            <span class="tech-tag">Docker</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-image">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <div class="project-content">
-                        <h3>Gen AI Content Platform</h3>
-                        <p>
-                            Created an AI-powered content generation platform with natural language 
-                            processing capabilities for automated content creation.
-                        </p>
-                        <div class="project-tech">
-                            <span class="tech-tag">Python</span>
-                            <span class="tech-tag">Gen AI</span>
-                            <span class="tech-tag">NLP</span>
-                            <span class="tech-tag">Azure</span>
-                        </div>
-                    </div>
-                </div>
+                </article>
             </div>
         </div>
-    </section> -->
+    </section>
 
     <section class="skills reveal" id="skills">
         <div class="container">
             <h2 class="section-title">Skills & Technologies</h2>
+            <div class="skill-filters" aria-label="Filter skills by category">
+                <button class="skill-filter active" type="button" data-filter="all">All</button>
+                <button class="skill-filter" type="button" data-filter="ai">AI/ML</button>
+                <button class="skill-filter" type="button" data-filter="backend">Backend</button>
+                <button class="skill-filter" type="button" data-filter="frontend">Frontend</button>
+                <button class="skill-filter" type="button" data-filter="data">Data Platforms</button>
+                <button class="skill-filter" type="button" data-filter="cloud">Cloud & DevOps</button>
+                <button class="skill-filter" type="button" data-filter="tools">Tools</button>
+            </div>
             
             <!-- AI & Machine Learning Row -->
-            <div class="skill-row">
+            <div class="skill-row" data-category="ai">
                 <h3 class="row-title">AI & Machine Learning</h3>
                 <div class="skills-row-grid">
                     <div class="skill-card" data-skill="agentic-ai">
@@ -473,7 +661,7 @@
             </div>
 
             <!-- Backend Development Row -->
-            <div class="skill-row">
+            <div class="skill-row" data-category="backend">
                 <h3 class="row-title">Backend Development</h3>
                 <div class="skills-row-grid">
                     <div class="skill-card" data-skill="python-backend">
@@ -524,7 +712,7 @@
             </div>
 
             <!-- Frontend Development Row -->
-            <div class="skill-row">
+            <div class="skill-row" data-category="frontend">
                 <h3 class="row-title">Frontend Development</h3>
                 <div class="skills-row-grid">
                     <div class="skill-card" data-skill="react">
@@ -559,7 +747,7 @@
             </div>
 
             <!-- Data Platforms & Databases Row -->
-            <div class="skill-row">
+            <div class="skill-row" data-category="data">
                 <h3 class="row-title">Data Platforms & Databases</h3>
                 <div class="skills-row-grid">
                     <div class="skill-card" data-skill="postgresql">
@@ -586,6 +774,18 @@
                         <i class="fas fa-memory"></i>
                         <span>Redis</span>
                     </div>
+                    <div class="skill-card" data-skill="pinecone">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>Pinecone</span>
+                    </div>
+                    <div class="skill-card" data-skill="neo4j">
+                        <i class="fas fa-share-alt"></i>
+                        <span>Neo4j</span>
+                    </div>
+                    <div class="skill-card" data-skill="vector-dbs">
+                        <i class="fas fa-vector-square"></i>
+                        <span>Vector DBs</span>
+                    </div>
                     <div class="skill-card" data-skill="mysql">
                         <i class="fas fa-database"></i>
                         <span>MySQL</span>
@@ -610,7 +810,7 @@
             </div>
 
             <!-- Cloud & DevOps Row -->
-            <div class="skill-row">
+            <div class="skill-row" data-category="cloud">
                 <h3 class="row-title">Cloud & DevOps</h3>
                 <div class="skills-row-grid">
                     <div class="skill-card" data-skill="aws">
@@ -677,7 +877,7 @@
             </div>
 
             <!-- Version Control & Management Row -->
-            <div class="skill-row">
+            <div class="skill-row" data-category="tools">
                 <h3 class="row-title">Tools, Version Control & Management</h3>
                 <div class="skills-row-grid">
                     <div class="skill-card" data-skill="git">
@@ -728,7 +928,7 @@
             </div>
 
             <!-- Learning Row -->
-            <div class="skill-row">
+            <div class="skill-row" data-category="tools">
                 <h3 class="row-title">Learning (In progress)</h3>
                 <div class="skills-row-grid">
                     <div class="skill-card" data-skill="Rust">
@@ -754,6 +954,207 @@
 
     </section>
 
+    <section class="certifications reveal" id="certifications">
+        <div class="container">
+            <h2 class="section-title">Certifications</h2>
+            <div class="certifications-grid">
+                <article class="cert-card" data-preview-image="assets/certifications/ibm-machine-learning-specialist.png">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fas fa-award"></i></span>
+                        <span class="cert-org">IBM</span>
+                        <span class="cert-year">2024</span>
+                    </div>
+                    <h3>Machine Learning Specialist - Professional</h3>
+                    <p class="cert-meta">Issued July 2024</p>
+                    <div class="cert-tags">
+                        <span>Machine Learning</span>
+                        <span>Algorithms</span>
+                    </div>
+                    <a class="cert-link" href="https://www.credly.com/badges/5675ed03-d3f1-41ff-806f-bbf483200def/linked_in_profile" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/coursera-machine-learning-specialization.jpeg">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fas fa-graduation-cap"></i></span>
+                        <span class="cert-org">Stanford University</span>
+                        <span class="cert-year">2024</span>
+                    </div>
+                    <h3>Machine Learning Specialization</h3>
+                    <p class="cert-meta">Issued June 2024</p>
+                    <div class="cert-tags">
+                        <span>Machine Learning</span>
+                        <span>Model Evaluation</span>
+                    </div>
+                    <a class="cert-link" href="https://www.coursera.org/account/accomplishments/specialization/Q9RN7X43PFPR" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/coursera-advanced-learning-algorithms.jpeg">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fas fa-chart-line"></i></span>
+                        <span class="cert-org">Stanford University</span>
+                        <span class="cert-year">2024</span>
+                    </div>
+                    <h3>Advanced Learning Algorithms</h3>
+                    <p class="cert-meta">Issued June 2024</p>
+                    <div class="cert-tags">
+                        <span>Neural Networks</span>
+                        <span>Advanced ML</span>
+                    </div>
+                    <a class="cert-link" href="https://www.coursera.org/account/accomplishments/verify/T5KC8SAUTLVV" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/coursera-unsupervised-learning.jpeg">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fas fa-project-diagram"></i></span>
+                        <span class="cert-org">Stanford University</span>
+                        <span class="cert-year">2024</span>
+                    </div>
+                    <h3>Unsupervised Learning, Recommenders, Reinforcement Learning</h3>
+                    <p class="cert-meta">Issued May 2024</p>
+                    <div class="cert-tags">
+                        <span>Unsupervised Learning</span>
+                        <span>Recommenders</span>
+                        <span>RL</span>
+                    </div>
+                    <a class="cert-link" href="https://www.coursera.org/account/accomplishments/records/S336UXDBDQ4Y" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/coursera-supervised-learning.jpeg">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fas fa-brain"></i></span>
+                        <span class="cert-org">Stanford University</span>
+                        <span class="cert-year">2024</span>
+                    </div>
+                    <h3>Supervised Machine Learning: Regression and Classification</h3>
+                    <p class="cert-meta">Issued May 2024</p>
+                    <div class="cert-tags">
+                        <span>Regression</span>
+                        <span>Classification</span>
+                    </div>
+                    <a class="cert-link" href="https://www.coursera.org/account/accomplishments/records/3TURFVQH8HW6" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/hackerrank-java.png">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fab fa-java"></i></span>
+                        <span class="cert-org">HackerRank</span>
+                        <span class="cert-year">2024</span>
+                    </div>
+                    <h3>Java Certification</h3>
+                    <p class="cert-meta">Issued July 2024</p>
+                    <div class="cert-tags">
+                        <span>Java</span>
+                        <span>Data Structures</span>
+                    </div>
+                    <a class="cert-link" href="https://www.hackerrank.com/certificates/66003d0e836c" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/udemy-django.jpg">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fas fa-leaf"></i></span>
+                        <span class="cert-org">Udemy</span>
+                        <span class="cert-year">2023</span>
+                    </div>
+                    <h3>Django Certification</h3>
+                    <p class="cert-meta">Issued June 2023</p>
+                    <div class="cert-tags">
+                        <span>Django</span>
+                        <span>Backend</span>
+                    </div>
+                    <a class="cert-link" href="https://www.udemy.com/certificate/UC-40f163ad-96ff-4293-b8f2-6143a042ddde/" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/hackerrank-problem-solving.png">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fas fa-puzzle-piece"></i></span>
+                        <span class="cert-org">HackerRank</span>
+                        <span class="cert-year">2022</span>
+                    </div>
+                    <h3>Problem Solving</h3>
+                    <p class="cert-meta">Issued May 2022</p>
+                    <div class="cert-tags">
+                        <span>Algorithms</span>
+                        <span>Problem Solving</span>
+                    </div>
+                    <a class="cert-link" href="https://www.hackerrank.com/certificates/d9dcf45888aa" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/ibm-applied-data-science-python.png">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fas fa-chart-area"></i></span>
+                        <span class="cert-org">IBM</span>
+                        <span class="cert-year">2020</span>
+                    </div>
+                    <h3>Applied Data Science with Python</h3>
+                    <p class="cert-meta">Issued September 2020</p>
+                    <div class="cert-tags">
+                        <span>Data Science</span>
+                        <span>Python</span>
+                    </div>
+                    <a class="cert-link" href="https://www.credly.com/badges/ee98ff5d-3522-45f8-8b27-38f6bbdcbaf2" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/ibm-deep-learning-essentials.png">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fas fa-network-wired"></i></span>
+                        <span class="cert-org">IBM</span>
+                        <span class="cert-year">2020</span>
+                    </div>
+                    <h3>IBM Certified Deep Learning Essentials</h3>
+                    <p class="cert-meta">Issued August 2020</p>
+                    <div class="cert-tags">
+                        <span>Deep Learning</span>
+                        <span>Data Science</span>
+                    </div>
+                    <a class="cert-link" href="https://www.credly.com/badges/c9299b58-f86d-4e1c-aca1-a73563b321a6?source=linked_in_profile" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/hackerrank-python3.png">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fab fa-python"></i></span>
+                        <span class="cert-org">HackerRank</span>
+                        <span class="cert-year">2020</span>
+                    </div>
+                    <h3>Python3 Certification</h3>
+                    <p class="cert-meta">Issued August 2020</p>
+                    <div class="cert-tags">
+                        <span>Python</span>
+                        <span>Programming</span>
+                    </div>
+                    <a class="cert-link" href="https://www.hackerrank.com/certificates/43ea5ede6a01" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+                <article class="cert-card" data-preview-image="assets/certifications/udemy-python3.jpg">
+                    <div class="cert-head">
+                        <span class="cert-icon"><i class="fab fa-python"></i></span>
+                        <span class="cert-org">Udemy</span>
+                        <span class="cert-year">2020</span>
+                    </div>
+                    <h3>Python3 Certification</h3>
+                    <p class="cert-meta">Issued April 2020</p>
+                    <div class="cert-tags">
+                        <span>Python</span>
+                        <span>Backend</span>
+                    </div>
+                    <a class="cert-link" href="https://www.udemy.com/certificate/UC-8d8d3f4e-313e-4a58-9e6c-904f2c530eef/" target="_blank" rel="noopener noreferrer">
+                        Show credential <i class="fas fa-arrow-right"></i>
+                    </a>
+                </article>
+            </div>
+        </div>
+    </section>
+
     <section class="contact reveal" id="contact">
         <div class="container">
             <h2 class="section-title">Let's Connect</h2>
@@ -763,6 +1164,10 @@
                     innovative projects, or just having a chat about AI and technology.
                 </p>
                 <div class="contact-methods">
+                    <button class="contact-item contact-button" type="button" onclick="openResumeModal()">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>View Resume</span>
+                    </button>
                     <a href="mailto:ayushhars@gmail.com" class="contact-item">
                         <i class="fas fa-envelope"></i>
                         <span>Mail Me</span>
@@ -799,8 +1204,7 @@
                 </div>
             </div>
             <div class="modal-body">
-                <iframe id="resumeIframe" 
-                        src="" 
+                <iframe id="resumeIframe"
                         width="100%" 
                         height="100%" 
                         frameborder="0">
@@ -814,9 +1218,77 @@
         <div class="modal-backdrop" onclick="closeResumeModal()"></div>
     </div>
 
+    <div id="caseStudyModal" class="case-study-modal" aria-hidden="true">
+        <div class="case-study-panel" role="dialog" aria-modal="true" aria-labelledby="caseStudyTitle">
+            <button class="modal-close case-study-close" type="button" onclick="closeCaseStudy()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="case-study-icon" id="caseStudyIcon"></div>
+            <span class="work-label" id="caseStudyLabel"></span>
+            <h3 id="caseStudyTitle"></h3>
+            <p id="caseStudySummary"></p>
+            <div class="case-study-flow" id="caseStudyFlow" hidden>
+                <div class="case-study-flow-header">
+                    <span id="caseStudyFlowHeading">Architecture Flow</span>
+                    <small id="caseStudyFlowMeta">Loaded on demand</small>
+                </div>
+                <img id="caseStudyFlowImage" alt="" loading="lazy" decoding="async">
+                <div class="case-study-gallery-controls" id="caseStudyGalleryControls" hidden>
+                    <button type="button" id="caseStudyGalleryPrev" aria-label="Previous screenshot">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="gallery-dots" id="caseStudyGalleryDots" role="tablist" aria-label="Screens"></div>
+                    <span class="gallery-count" id="caseStudyGalleryStatus" aria-live="polite"></span>
+                    <button type="button" id="caseStudyGalleryNext" aria-label="Next screenshot">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="case-study-columns">
+                <div>
+                    <h4>What It Solves</h4>
+                    <ul id="caseStudyProblems"></ul>
+                </div>
+                <div>
+                    <h4>Technical Shape</h4>
+                    <ul id="caseStudyTechnical"></ul>
+                </div>
+            </div>
+            <div class="case-study-impact" id="caseStudyImpact"></div>
+        </div>
+        <div class="modal-backdrop" onclick="closeCaseStudy()"></div>
+    </div>
+
+    <div id="credentialModal" class="credential-modal" aria-hidden="true">
+        <div class="credential-panel" role="dialog" aria-modal="true" aria-labelledby="credentialTitle">
+            <div class="credential-header">
+                <div>
+                    <span id="credentialIssuer"></span>
+                    <h3 id="credentialTitle"></h3>
+                </div>
+                <div class="credential-actions">
+                    <a id="credentialOpenLink" class="credential-open" href="#" target="_blank" rel="noopener noreferrer">
+                        Open source <i class="fas fa-external-link-alt"></i>
+                    </a>
+                    <button class="modal-close" type="button" onclick="closeCredentialModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="credential-preview">
+                <img id="credentialPreviewImage" alt="Credential preview">
+                <div class="credential-preview-details">
+                    <span id="credentialPreviewMeta"></span>
+                    <p id="credentialPreviewDescription"></p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop" onclick="closeCredentialModal()"></div>
+    </div>
+
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Aayush Kumar Mishra. All rights reserved.</p>
+            <p>&copy; 2026 Aayush Kumar Mishra. All rights reserved.</p>
         </div>
     </footer>
 
