@@ -11,7 +11,8 @@ function initThreeJS() {
     });
     
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // A blurred dust field gains nothing from a 2x framebuffer.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     
     // Create particles
     createParticleSystem();
@@ -22,23 +23,36 @@ function initThreeJS() {
     animate();
 }
 
+// The accent as 0-1 floats, read live off the stylesheet so the field
+// always matches whatever palette is loaded.
+function accentRGB() {
+    const raw = getComputedStyle(document.documentElement)
+        .getPropertyValue('--accent-rgb')
+        .split(',')
+        .map(v => parseInt(v.trim(), 10) / 255);
+    return raw.length === 3 && raw.every(v => !isNaN(v)) ? raw : [0.55, 0.6, 0.85];
+}
+
 function createParticleSystem() {
-    const particleCount = window.innerWidth < 768 ? 50 : 100;
+    const particleCount = window.innerWidth < 768 ? 90 : 190;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
     const sizes = new Float32Array(particleCount);
     
+    const [ar, ag, ab] = accentRGB();
+
     for (let i = 0; i < particleCount * 3; i += 3) {
         positions[i] = (Math.random() - 0.5) * 10;
         positions[i + 1] = (Math.random() - 0.5) * 10;
         positions[i + 2] = (Math.random() - 0.5) * 10;
         
-        colors[i] = 0.4 + Math.random() * 0.6;
-        colors[i + 1] = 0.5 + Math.random() * 0.5;
-        colors[i + 2] = 0.9;
-        
-        sizes[i / 3] = Math.random() * 3 + 1;
+        const shade = 0.6 + Math.random() * 0.4;
+        colors[i] = ar * shade;
+        colors[i + 1] = ag * shade;
+        colors[i + 2] = ab * shade;
+
+        sizes[i / 3] = Math.random() * 1.8 + 0.6;
     }
     
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -51,14 +65,16 @@ function createParticleSystem() {
         },
         vertexShader: `
             attribute float size;
-            attribute vec3 color;
+            // three.js injects the color attribute itself when
+            // vertexColors is on. Declaring it again fails to compile,
+            // which is why this field never used to render.
             varying vec3 vColor;
             uniform float time;
             
             void main() {
                 vColor = color;
                 vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_PointSize = size * (300.0 / -mvPosition.z) * (1.0 + sin(time + position.x) * 0.1);
+                gl_PointSize = size * (26.0 / -mvPosition.z) * (1.0 + sin(time + position.x) * 0.12);
                 gl_Position = projectionMatrix * mvPosition;
             }
         `,
@@ -67,29 +83,43 @@ function createParticleSystem() {
             
             void main() {
                 float distanceToCenter = distance(gl_PointCoord, vec2(0.5));
-                float alpha = 1.0 - smoothstep(0.0, 0.5, distanceToCenter);
-                gl_FragColor = vec4(vColor, alpha * 0.6);
+                if (distanceToCenter > 0.5) discard;
+                float alpha = 1.0 - smoothstep(0.1, 0.5, distanceToCenter);
+                gl_FragColor = vec4(vColor, alpha * 0.85);
             }
         `,
         transparent: true,
-        vertexColors: true
+        vertexColors: true,
+        // A transparent material that still writes depth clips its
+        // neighbours along the sprite quad, which is what put square
+        // edges around overlapping particles.
+        depthWrite: false,
+        depthTest: false
     });
     
     particles = new THREE.Points(geometry, material);
     scene.add(particles);
 }
 
-function animate() {
+const PARTICLE_FPS = 30;
+let lastParticleFrame = 0;
+
+function animate(now) {
     requestAnimationFrame(animate);
-    
-    const time = Date.now() * 0.001;
-    
+    if (!renderer || document.hidden) return;
+
+    // Throttle to PARTICLE_FPS rather than the display refresh rate.
+    if (now - lastParticleFrame < 1000 / PARTICLE_FPS) return;
+    lastParticleFrame = now;
+
+    const time = now * 0.001;
+
     if (particles) {
         particles.rotation.x = time * 0.05;
         particles.rotation.y = time * 0.075;
         particles.material.uniforms.time.value = time;
     }
-    
+
     renderer.render(scene, camera);
 }
 
@@ -131,23 +161,11 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navbar background on scroll - theme aware
+// Navbar state on scroll. Passive, and the element is looked up once.
+const navbarEl = document.querySelector('.navbar');
 window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    
-    if (window.scrollY > 100) {
-        if (currentTheme === 'light') {
-            navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        } else {
-            navbar.style.background = 'rgba(10, 10, 10, 0.98)';
-        }
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-    } else {
-        navbar.style.background = 'var(--glass-bg)';
-        navbar.style.boxShadow = 'none';
-    }
-});
+    if (navbarEl) navbarEl.classList.toggle('is-scrolled', window.scrollY > 24);
+}, { passive: true });
 
 // ===== ENHANCED SCROLL ANIMATIONS =====
 const enhancedObserverOptions = {
@@ -161,7 +179,7 @@ const enhancedObserver = new IntersectionObserver((entries) => {
             entry.target.classList.add('active');
             
             // Add stagger animation to child elements
-            const children = entry.target.querySelectorAll('.project-card, .skill-item, .skill-category, .experience-item, .about-highlights .highlight');
+            const children = entry.target.querySelectorAll('.project-card, .work-card, .skill-item, .skill-category, .experience-item, .about-highlights .highlight');
             children.forEach((child, index) => {
                 setTimeout(() => {
                     child.style.opacity = '1';
@@ -173,35 +191,6 @@ const enhancedObserver = new IntersectionObserver((entries) => {
 }, enhancedObserverOptions);
 
 // Mouse follow cursor
-let mouseFollower;
-function createMouseFollower() {
-    mouseFollower = document.createElement('div');
-    mouseFollower.className = 'mouse-follow';
-    document.body.appendChild(mouseFollower);
-    
-    let mouseX = 0, mouseY = 0;
-    let followerX = 0, followerY = 0;
-    
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-    
-    function animateFollower() {
-        followerX += (mouseX - followerX) * 0.1;
-        followerY += (mouseY - followerY) * 0.1;
-        
-        if (mouseFollower) {
-            mouseFollower.style.left = followerX + 'px';
-            mouseFollower.style.top = followerY + 'px';
-        }
-        
-        requestAnimationFrame(animateFollower);
-    }
-    
-    animateFollower();
-}
-
 // Enhanced scroll-triggered animations
 function initScrollAnimations() {
     // Observe sections with reveal class
@@ -217,18 +206,10 @@ function initScrollAnimations() {
         
         element.addEventListener('mouseenter', () => {
             element.style.transform = 'translateY(-5px) scale(1.02)';
-            if (mouseFollower) {
-                mouseFollower.style.transform = 'translate(-50%, -50%) scale(1.5)';
-                mouseFollower.style.borderColor = '#667eea';
-            }
         });
         
         element.addEventListener('mouseleave', () => {
             element.style.transform = 'translateY(0) scale(1)';
-            if (mouseFollower) {
-                mouseFollower.style.transform = 'translate(-50%, -50%) scale(1)';
-                mouseFollower.style.borderColor = 'rgba(102, 126, 234, 0.5)';
-            }
         });
     });
 }
@@ -287,54 +268,398 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== ENHANCED PROJECT CARD INTERACTIONS =====
 function initProjectCardEffects() {
-    document.querySelectorAll('.project-card').forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const rotateX = (y - centerY) / 15;
-            const rotateY = (centerX - x) / 15;
-            
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px) scale(1.02)`;
-            card.style.boxShadow = '0 25px 50px rgba(102, 126, 234, 0.3)';
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0) scale(1)';
-            card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.3)';
-        });
-        
-        // Add click animation
+    document.querySelectorAll('.project-card, .work-card').forEach(card => {
         card.addEventListener('mousedown', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(2px) scale(0.98)';
+            card.style.transform = 'translateY(1px)';
         });
         
         card.addEventListener('mouseup', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(-5px) scale(1.02)';
+            card.style.transform = '';
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
         });
     });
 }
 
-// Smooth reveal animation for elements
-function revealOnScroll() {
-    const reveals = document.querySelectorAll('.reveal');
-    
-    reveals.forEach(element => {
-        const windowHeight = window.innerHeight;
-        const elementTop = element.getBoundingClientRect().top;
-        const elementVisible = 150;
-        
-        if (elementTop < windowHeight - elementVisible) {
-            element.classList.add('active');
+// ===== IMPACT COUNTERS =====
+function initMetricCounters() {
+    const counters = document.querySelectorAll('.metric-counter');
+    if (!counters.length) return;
+
+    const formatMetric = (value, counter) => {
+        const prefix = counter.dataset.prefix || '';
+        const suffix = counter.dataset.suffix || '';
+        const displayValue = value >= 1000 ? value.toLocaleString('en-US') : value;
+        return `${prefix}${displayValue}${suffix}`;
+    };
+
+    const runCounter = (counter) => {
+        const target = Number(counter.dataset.target || 0);
+        const duration = 1300;
+        const start = performance.now();
+
+        function tick(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const value = Math.round(target * eased);
+            counter.textContent = formatMetric(value, counter);
+
+            if (progress < 1) {
+                requestAnimationFrame(tick);
+            } else {
+                counter.textContent = formatMetric(target, counter);
+            }
+        }
+
+        requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.dataset.counted) {
+                entry.target.dataset.counted = 'true';
+                runCounter(entry.target);
+            }
+        });
+    }, { threshold: 0.4 });
+
+    counters.forEach(counter => observer.observe(counter));
+}
+
+// ===== SKILL FILTERS =====
+function initSkillFilters() {
+    const filterButtons = document.querySelectorAll('.skill-filter');
+    const skillRows = document.querySelectorAll('.skill-row[data-category]');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const filter = button.dataset.filter;
+
+            filterButtons.forEach(item => item.classList.remove('active'));
+            button.classList.add('active');
+
+            skillRows.forEach(row => {
+                const shouldShow = filter === 'all' || row.dataset.category === filter;
+                row.classList.toggle('is-hidden', !shouldShow);
+            });
+        });
+    });
+}
+
+// ===== CASE STUDY MODAL =====
+const caseStudies = {
+    referral: {
+        icon: 'fas fa-file-medical-alt',
+        label: 'Healthcare AI',
+        title: 'Referral Extraction System',
+        summary: 'A document intelligence workflow that auto-reads faxes, emails, and manual uploads, then uses Gemini OCR and Bedrock-backed LLM extraction to create editable structured referral metadata.',
+        flowImage: 'assets/case-studies/referral-system-hld.gif',
+        flowAlt: 'Animated HLD diagram for referral extraction across intake, orchestration, AI extraction, storage and review, and downstream DAG stages.',
+        problems: [
+            'Referral inputs arrive from faxes, emails, and manual uploads in scanned or image-heavy formats.',
+            'Extracted fields need enrichment from other systems before they are useful downstream.',
+            'Teams need automation while keeping the populated metadata manually editable and reviewable.'
+        ],
+        technical: [
+            'SQS-backed queueing layer orchestrates retryable extraction jobs and writeback processing.',
+            'Gemini OCR and Bedrock-backed LLM extraction parse scanned documents and populate structured metadata.',
+            'Cosmos DB stores extracted and enriched metadata, with Redis-backed lookup paths and Kafka/event hooks for downstream workflow handoff.'
+        ],
+        impact: 'Creates an automation-ready referral backbone that can feed benefit verification, prior authorization, provider/patient communication, fax workflows, and Twilio-based autonomous call flows.'
+    },
+    'agentic-ingestion': {
+        icon: 'fas fa-route',
+        label: 'Data Platform',
+        title: 'Agentic Ingestion Orchestration',
+        summary: 'An incremental ingestion and pattern-detection workflow that discovers new landing files, clusters incoming datasets, validates schema quality, and routes patterns through human accept/reject review.',
+        flowImage: 'assets/case-studies/agentic-ingestion-hld.gif',
+        flowAlt: 'Animated HLD diagram for agentic ingestion orchestration across AWS Athena discovery, SQS, Kubernetes Scala workers, MongoDB, Redis, LLM-assisted pattern inference, decision paths, and review experience.',
+        problems: [
+            'Incremental landing files need safe discovery across folders, connector paths, and file formats.',
+            'Dataset pattern recommendations must avoid grouping unrelated files or low-confidence clusters.',
+            'Users need a review flow that can accept a pattern into a dataset or reject it cleanly.'
+        ],
+        technical: [
+            'AWS/Athena metadata fetches feed SQS workers that process connector paths incrementally.',
+            'Scala clustering analyzes folder paths, partitions, lexical filename features, schemas, and file formats.',
+            'MongoDB tracks job executions, identified patterns, epochs, and accept/reject state used by the Pattern UI and FileExplorer.'
+        ],
+        impact: 'Turns raw landing-zone activity into governed dataset recommendations with validation, confidence checks, and a clear human-in-the-loop creation path.'
+    },
+    lakehouse: {
+        icon: 'fas fa-layer-group',
+        label: 'Lakehouse Engineering',
+        title: 'Snowflake to Databricks Expansion',
+        summary: 'Extended Snowflake-first Scala and Python pipelines to Databricks with governed writes, Unity Catalog integration, and schema safeguards.',
+        flowImage: 'assets/case-studies/lakehouse-hld.gif',
+        flowAlt: 'Animated HLD diagram for Snowflake to Databricks expansion with service principal authentication, Unity Catalog, external locations, manual date format mapping, strict casting, and governed lakehouse writes.',
+        problems: [
+            'Existing pipelines needed Databricks support without weakening governance.',
+            'Databricks enforced stricter ISO date handling than Snowflake, requiring a manual date-format mapping layer in Scala.',
+            'Cloud storage destinations needed safer incremental archive and destination flows.'
+        ],
+        technical: [
+            'Service-principal authentication with PAT fallback.',
+            'Unity Catalog, metastore-aware writes, external locations, and governed table operations.',
+            'Manual date-field mapping plus strict casting and schema validation.'
+        ],
+        impact: 'Enabled broader lakehouse execution while preserving reliable, resumable ingestion across S3 and ADLS flows.'
+    },
+    analytics: {
+        icon: 'fas fa-chart-line',
+        label: 'Product Analytics',
+        title: 'Healthcare Analytics Dashboard',
+        summary: 'A data-intensive dashboard experience for healthcare and senior-living workflows with drilldowns, optimized queries, and quality monitoring.',
+        flowHeading: 'Product Screens',
+        flowMeta: 'Redacted client data',
+        galleryImages: [
+            { src: 'assets/analytics/analytics-pulse-overview.png', alt: 'Redacted analytics dashboard pulse overview with KPI cards and process flow charts.' },
+            { src: 'assets/analytics/analytics-distribution.png', alt: 'Redacted analytics dashboard distribution view with trend charts and status breakdowns.' },
+            { src: 'assets/analytics/analytics-agents.png', alt: 'Redacted analytics dashboard agents view with extraction accuracy and channel breakdown charts.' },
+            { src: 'assets/analytics/analytics-location-detail.png', alt: 'Redacted analytics dashboard location drilldown drawer.' },
+            { src: 'assets/analytics/analytics-intake-detail.png', alt: 'Redacted analytics dashboard intake outcomes drilldown drawer.' }
+        ],
+        problems: [
+            'Operational teams need high-signal dashboards over complex healthcare data.',
+            'Analytics screens must stay useful under repeated filtering and drilldown use.',
+            'Data quality signals need to be visible inside normal product workflows.'
+        ],
+        technical: [
+            '30+ chart visualizations with interactive drilldowns.',
+            'React and TypeScript product surfaces backed by optimized queries.',
+            'Cosmos DB, Redis caching, Azure workflows, and data-quality monitoring.'
+        ],
+        impact: 'Improved visibility into healthcare workflows and gave teams faster ways to inspect trends, anomalies, and data quality.'
+    },
+    scorecard: {
+        icon: 'fas fa-tachometer-alt',
+        label: 'Enterprise Scorecards',
+        title: 'DAG-Based Scorecard Platform',
+        summary: 'A production-grade scorecard system that connected DAG-based data ingestion, ML downtime prediction, backend APIs, and Angular/Kendo UI dashboards into a scalable enterprise product.',
+        flowImage: 'assets/case-studies/scorecard-hld.gif',
+        flowAlt: 'Animated HLD diagram for a DAG-based scorecard platform from client system aggregation through DAG metrics, scorecard outputs, PDF reports, and analytics dashboards.',
+        problems: [
+            'Operational scorecards needed reliable ingestion from multiple data sources into production dashboards.',
+            'Teams needed predictive signals around downtime instead of only retrospective reporting.',
+            'The frontend had to support dense enterprise workflows while staying usable for client-facing scorecard review.'
+        ],
+        technical: [
+            'Designed DAG-based ingestion flows that moved data into production-grade dashboard and scorecard layers.',
+            'Built Python services with Django and FastAPI for backend APIs, orchestration, and product workflows.',
+            'Integrated ML prediction models for downtime prediction and surfaced outputs through Angular and Kendo UI.'
+        ],
+        impact: 'Scaled the system for enterprise usage across client scorecard workflows, contributing to approximately $70M in annual revenue impact.'
+    }
+};
+
+let activeCaseStudyGallery = [];
+let activeCaseStudyGalleryIndex = 0;
+
+function initCaseStudies() {
+    document.querySelectorAll('[data-case-study]').forEach(card => {
+        card.addEventListener('click', () => openCaseStudy(card.dataset.caseStudy));
+    });
+
+    document.getElementById('caseStudyGalleryPrev')?.addEventListener('click', () => {
+        showCaseStudyGalleryImage(activeCaseStudyGalleryIndex - 1);
+    });
+
+    document.getElementById('caseStudyGalleryNext')?.addEventListener('click', () => {
+        showCaseStudyGalleryImage(activeCaseStudyGalleryIndex + 1);
+    });
+}
+
+function showCaseStudyGalleryImage(index) {
+    const flowImage = document.getElementById('caseStudyFlowImage');
+    const status = document.getElementById('caseStudyGalleryStatus');
+    const dots = document.getElementById('caseStudyGalleryDots');
+    if (!flowImage || !activeCaseStudyGallery.length) return;
+
+    const total = activeCaseStudyGallery.length;
+    activeCaseStudyGalleryIndex = (index + total) % total;
+    const item = activeCaseStudyGallery[activeCaseStudyGalleryIndex];
+    flowImage.src = item.src;
+    flowImage.alt = item.alt;
+    if (status) status.textContent = `${activeCaseStudyGalleryIndex + 1} / ${total}`;
+
+    // Dots are built once per case study, then only their state changes.
+    if (dots) {
+        if (dots.children.length !== total) {
+            dots.innerHTML = '';
+            activeCaseStudyGallery.forEach((img, i) => {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'gallery-dot';
+                dot.setAttribute('role', 'tab');
+                dot.setAttribute('aria-label', `Screen ${i + 1} of ${total}`);
+                dot.addEventListener('click', () => showCaseStudyGalleryImage(i));
+                dots.appendChild(dot);
+            });
+        }
+        [...dots.children].forEach((dot, i) => {
+            const on = i === activeCaseStudyGalleryIndex;
+            dot.classList.toggle('is-active', on);
+            dot.setAttribute('aria-selected', String(on));
+        });
+    }
+}
+
+function openCaseStudy(key) {
+    const data = caseStudies[key];
+    const modal = document.getElementById('caseStudyModal');
+    if (!data || !modal) return;
+
+    document.getElementById('caseStudyIcon').innerHTML = `<i class="${data.icon}"></i>`;
+    document.getElementById('caseStudyLabel').textContent = data.label;
+    document.getElementById('caseStudyTitle').textContent = data.title;
+    document.getElementById('caseStudySummary').textContent = data.summary;
+    document.getElementById('caseStudyProblems').innerHTML = data.problems.map(item => `<li>${item}</li>`).join('');
+    document.getElementById('caseStudyTechnical').innerHTML = data.technical.map(item => `<li>${item}</li>`).join('');
+    document.getElementById('caseStudyImpact').textContent = data.impact;
+
+    const flow = document.getElementById('caseStudyFlow');
+    const flowImage = document.getElementById('caseStudyFlowImage');
+    const flowHeading = document.getElementById('caseStudyFlowHeading');
+    const flowMeta = document.getElementById('caseStudyFlowMeta');
+    const galleryControls = document.getElementById('caseStudyGalleryControls');
+    if (flow && flowImage && flowHeading && flowMeta && galleryControls) {
+        activeCaseStudyGallery = data.galleryImages || [];
+        activeCaseStudyGalleryIndex = 0;
+
+        if (activeCaseStudyGallery.length) {
+            flow.hidden = false;
+            galleryControls.hidden = activeCaseStudyGallery.length <= 1;
+            flowHeading.textContent = data.flowHeading || 'Product Screens';
+            flowMeta.textContent = data.flowMeta || 'Loaded on demand';
+            showCaseStudyGalleryImage(0);
+        } else if (data.flowImage) {
+            flow.hidden = false;
+            galleryControls.hidden = true;
+            flowHeading.textContent = data.flowHeading || 'Architecture Flow';
+            flowMeta.textContent = data.flowMeta || 'Loaded on demand';
+            flowImage.src = data.flowImage;
+            flowImage.alt = data.flowAlt || `${data.title} architecture flow`;
+        } else {
+            flow.hidden = true;
+            galleryControls.hidden = true;
+            flowImage.removeAttribute('src');
+            flowImage.alt = '';
+        }
+    }
+
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    setTimeout(() => modal.classList.add('active'), 10);
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCaseStudy() {
+    const modal = document.getElementById('caseStudyModal');
+    if (!modal) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        const flowImage = document.getElementById('caseStudyFlowImage');
+        if (flowImage) flowImage.removeAttribute('src');
+        activeCaseStudyGallery = [];
+        activeCaseStudyGalleryIndex = 0;
+    }, 300);
+    document.body.style.overflow = 'auto';
+}
+
+// ===== CERTIFICATION CREDENTIAL VIEWER =====
+function initCredentialCards() {
+    document.querySelectorAll('.cert-card').forEach(card => {
+        const link = card.querySelector('.cert-link');
+        if (!link) return;
+
+        card.addEventListener('click', () => {
+            openCredentialModal(card, link.href);
+        });
+
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            openCredentialModal(card, link.href);
+        });
+    });
+}
+
+function initCredentialOpenLink() {
+    const openLink = document.getElementById('credentialOpenLink');
+    if (!openLink) return;
+
+    openLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (openLink.href && openLink.href !== '#') {
+            window.open(openLink.href, '_blank', 'noopener,noreferrer');
         }
     });
 }
 
-window.addEventListener('scroll', revealOnScroll);
+function openCredentialModal(card, url) {
+    const modal = document.getElementById('credentialModal');
+    const preview = modal?.querySelector('.credential-preview');
+    const previewImage = document.getElementById('credentialPreviewImage');
+    const previewMeta = document.getElementById('credentialPreviewMeta');
+    const previewDescription = document.getElementById('credentialPreviewDescription');
+    const title = document.getElementById('credentialTitle');
+    const issuer = document.getElementById('credentialIssuer');
+    const openLink = document.getElementById('credentialOpenLink');
+
+    if (!modal || !preview || !previewImage || !previewMeta || !previewDescription || !title || !issuer || !openLink) return;
+
+    title.textContent = card.querySelector('h3')?.textContent || 'Credential';
+    issuer.textContent = card.querySelector('.cert-org')?.textContent || 'Certification';
+    previewMeta.textContent = card.querySelector('.cert-org')?.textContent || 'Certification';
+    previewDescription.textContent = card.querySelector('.cert-meta')?.textContent || 'Credential details';
+
+    if (card.dataset.previewImage) {
+        preview.classList.remove('no-image');
+        previewImage.style.display = '';
+        previewImage.src = card.dataset.previewImage;
+        previewImage.alt = `${title.textContent} credential preview`;
+    } else {
+        preview.classList.add('no-image');
+        previewImage.removeAttribute('src');
+        previewImage.alt = '';
+        previewImage.style.display = 'none';
+        previewDescription.textContent = 'Credential image pending. Use Open source to verify this credential on the issuer website.';
+    }
+
+    openLink.href = url;
+
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    setTimeout(() => modal.classList.add('active'), 10);
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCredentialModal() {
+    const modal = document.getElementById('credentialModal');
+    const previewImage = document.getElementById('credentialPreviewImage');
+    if (!modal || !previewImage) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        previewImage.src = '';
+        previewImage.style.display = '';
+    }, 300);
+    document.body.style.overflow = 'auto';
+}
+
+// Smooth reveal animation for elements
+// Reveal is handled by enhancedObserver (IntersectionObserver). A
+// scroll-driven version used to run alongside it, calling
+// getBoundingClientRect() on every .reveal element per scroll event.
 
 // Contact form animation
 function animateContactForm() {
@@ -354,25 +679,9 @@ function animateContactForm() {
 }
 
 // ===== INTERACTIVE FLOATING ELEMENTS =====
-function animateFloatingShapes() {
-    const shapes = document.querySelectorAll('.floating-shape');
-    
-    shapes.forEach((shape, index) => {
-        let startTime = Date.now() + index * 1000;
-        
-        function updateShape() {
-            const elapsed = (Date.now() - startTime) * 0.001;
-            const x = Math.sin(elapsed * 0.5 + index) * 30;
-            const y = Math.cos(elapsed * 0.3 + index) * 20;
-            const rotation = elapsed * 20 + index * 60;
-            
-            shape.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
-            requestAnimationFrame(updateShape);
-        }
-        
-        updateShape();
-    });
-}
+// Floating shapes are animated by the CSS `float-around` keyframes.
+// A JS rAF loop used to write inline transforms over the top of them,
+// which beat the stylesheet and forced an uncomposited paint per frame.
 
 // ===== PERFORMANCE OPTIMIZATIONS =====
 let ticking = false;
@@ -449,7 +758,7 @@ function setTheme(theme) {
     localStorage.setItem('theme', theme);
     
     // Update Three.js particle colors based on theme
-    updateParticleColors(theme);
+    updateParticleColors();
     
     // Trigger theme change event for other components
     window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme } }));
@@ -457,27 +766,21 @@ function setTheme(theme) {
     console.log(`🎨 Theme switched to: ${theme}`);
 }
 
-function updateParticleColors(theme) {
-    if (particles && particles.material) {
-        const colors = particles.geometry.attributes.color;
-        const colorArray = colors.array;
-        
-        for (let i = 0; i < colorArray.length; i += 3) {
-            if (theme === 'light') {
-                // Darker particles for light theme
-                colorArray[i] = 0.2 + Math.random() * 0.4;     // R
-                colorArray[i + 1] = 0.3 + Math.random() * 0.4; // G
-                colorArray[i + 2] = 0.6 + Math.random() * 0.4; // B
-            } else {
-                // Brighter particles for dark theme
-                colorArray[i] = 0.4 + Math.random() * 0.6;     // R
-                colorArray[i + 1] = 0.5 + Math.random() * 0.5; // G
-                colorArray[i + 2] = 0.9;                       // B
-            }
-        }
-        
-        colors.needsUpdate = true;
+function updateParticleColors() {
+    if (!particles || !particles.geometry) return;
+
+    const [ar, ag, ab] = accentRGB();
+    const colors = particles.geometry.attributes.color;
+    const a = colors.array;
+
+    for (let i = 0; i < a.length; i += 3) {
+        const shade = 0.6 + Math.random() * 0.4;
+        a[i] = ar * shade;
+        a[i + 1] = ag * shade;
+        a[i + 2] = ab * shade;
     }
+
+    colors.needsUpdate = true;
 }
 
 // ===== ENHANCED THEME ANIMATIONS =====
@@ -504,40 +807,50 @@ function addThemeTransitionEffects() {
             document.body.classList.remove('theme-transition-disable');
         }, 50);
         
-        // Update navbar scroll background for new theme
-        const navbar = document.querySelector('.navbar');
-        if (window.scrollY > 100) {
-            if (e.detail.theme === 'light') {
-                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-            } else {
-                navbar.style.background = 'rgba(10, 10, 10, 0.98)';
-            }
-        }
-        
-        // Add a subtle flash effect
-        const flash = document.createElement('div');
-        flash.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: ${e.detail.theme === 'light' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'};
-            pointer-events: none;
-            z-index: 10000;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        `;
-        
-        document.body.appendChild(flash);
-        
-        setTimeout(() => {
-            flash.style.opacity = '0';
-            setTimeout(() => {
-                document.body.removeChild(flash);
-            }, 300);
-        }, 100);
     });
+}
+
+// ===== SCROLL SPY =====
+// Marks the nav link for whichever section is currently in view. Uses the
+// midpoint of the viewport rather than the top edge, so the highlight
+// changes when a section actually dominates the screen.
+function initScrollSpy() {
+    const links = [...document.querySelectorAll('.nav-link')];
+    // Sorted by position on the page, not by order in the markup. Walking
+    // them in nav order and keeping the last match means an out-of-order
+    // link silently overwrites the correct answer.
+    const targets = links
+        .map(link => ({ link, section: document.querySelector(link.getAttribute('href')) }))
+        .filter(entry => entry.section)
+        .sort((a, b) => a.section.offsetTop - b.section.offsetTop);
+    if (!targets.length) return;
+
+    let ticking = false;
+    const update = () => {
+        ticking = false;
+        const line = window.scrollY + window.innerHeight * 0.4;
+        let current = null;
+        targets.forEach(entry => {
+            if (entry.section.offsetTop <= line) current = entry;
+        });
+        targets.forEach(entry => {
+            const on = entry === current;
+            entry.link.classList.toggle('is-current', on);
+            if (on) {
+                entry.link.setAttribute('aria-current', 'true');
+            } else {
+                entry.link.removeAttribute('aria-current');
+            }
+        });
+    };
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(update);
+        }
+    }, { passive: true });
+    update();
 }
 
 // Scroll progress indicator
@@ -548,21 +861,27 @@ function addScrollProgress() {
         position: fixed;
         top: 0;
         left: 0;
-        width: 0%;
+        width: 100%;
         height: 3px;
-        background: linear-gradient(90deg, #667eea, #764ba2);
+        background: var(--accent-primary);
         z-index: 9999;
-        transition: width 0.1s ease;
+        transform: scaleX(0);
+        transform-origin: 0 50%;
     `;
     
     document.body.appendChild(progressBar);
     
+    let progressQueued = false;
     window.addEventListener('scroll', () => {
-        const scrollTop = window.pageYOffset;
-        const docHeight = document.body.scrollHeight - window.innerHeight;
-        const scrollPercent = (scrollTop / docHeight) * 100;
-        progressBar.style.width = scrollPercent + '%';
-    });
+        if (progressQueued) return;
+        progressQueued = true;
+        requestAnimationFrame(() => {
+            progressQueued = false;
+            const docHeight = document.body.scrollHeight - window.innerHeight;
+            const pct = docHeight > 0 ? window.pageYOffset / docHeight : 0;
+            progressBar.style.transform = 'scaleX(' + pct + ')';
+        });
+    }, { passive: true });
 }
 
 // Make skill cards non-interactive (display only)
@@ -591,13 +910,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize scroll animations
     initScrollAnimations();
     
-    // Create mouse follower (desktop only)
-    if (window.innerWidth > 768) {
-        createMouseFollower();
-    }
-    
     // Animate floating shapes
-    animateFloatingShapes();
     
     // Add section transitions
     addSectionTransitions();
@@ -607,6 +920,35 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize project card effects
     initProjectCardEffects();
+
+    // Initialize portfolio content interactions
+    initMetricCounters();
+    initSkillFilters();
+    initCaseStudies();
+    initCredentialCards();
+    initCredentialOpenLink();
+    initScrollSpy();
+
+    // Publish the bar's height so the mobile panel can anchor to it rather
+    // than to a hardcoded 70px that stops being true once it contracts.
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        // Always the RESTING height, never the contracted one: layout
+        // reserves space against this, so it has to be stable while
+        // scrolling. Measured with the scrolled state briefly off.
+        const publishNavHeight = () => {
+            const wasScrolled = navbar.classList.contains('is-scrolled');
+            if (wasScrolled) navbar.classList.remove('is-scrolled');
+            document.documentElement.style
+                .setProperty('--nav-h', navbar.offsetHeight + 'px');
+            if (wasScrolled) navbar.classList.add('is-scrolled');
+        };
+        publishNavHeight();
+        window.addEventListener('resize', publishNavHeight);
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(publishNavHeight);
+        }
+    }
     
     // Add scroll progress
     addScrollProgress();
@@ -654,7 +996,7 @@ function createParticles() {
             position: absolute;
             width: 2px;
             height: 2px;
-            background: rgba(102, 126, 234, 0.3);
+            background: rgba(var(--accent-rgb), 0.28);
             border-radius: 50%;
             animation: float ${5 + Math.random() * 10}s infinite linear;
             left: ${Math.random() * 100}%;
@@ -732,10 +1074,29 @@ function closeResumeModal() {
 
 // Close modal on escape key
 document.addEventListener('keydown', function(e) {
+    const csModal = document.getElementById('caseStudyModal');
+    if (csModal && csModal.classList.contains('active') && activeCaseStudyGallery.length > 1) {
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            showCaseStudyGalleryImage(activeCaseStudyGalleryIndex - 1);
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            showCaseStudyGalleryImage(activeCaseStudyGalleryIndex + 1);
+        }
+    }
+
     if (e.key === 'Escape') {
         const modal = document.getElementById('resumeModal');
         if (modal && modal.classList.contains('active')) {
             closeResumeModal();
+        }
+        const caseStudyModal = document.getElementById('caseStudyModal');
+        if (caseStudyModal && caseStudyModal.classList.contains('active')) {
+            closeCaseStudy();
+        }
+        const credentialModal = document.getElementById('credentialModal');
+        if (credentialModal && credentialModal.classList.contains('active')) {
+            closeCredentialModal();
         }
     }
 });

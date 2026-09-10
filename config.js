@@ -1,5 +1,5 @@
 const config = {
-    resumeFileId: '1n4YqK6DYJIBVPcZHj7HNWqNpY5xb0Y0E'
+    resumeFileId: '1mmHVyF9SBjwjB3shCbKrfjfKtiL2fzCp'
 };
 
 window.config = config;
