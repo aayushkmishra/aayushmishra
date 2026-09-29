@@ -723,11 +723,12 @@ function addSectionTransitions() {
 // ===== THEME TOGGLE FUNCTIONALITY =====
 function initThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    // Get saved theme from localStorage or use system preference
+
+    // Light is the default for a first-time visitor. Someone returning keeps
+    // whatever they last picked. The OS preference is deliberately not
+    // consulted: the site is designed light first and should open that way.
     const savedTheme = localStorage.getItem('theme');
-    const defaultTheme = savedTheme || (prefersDark.matches ? 'dark' : 'light');
+    const defaultTheme = savedTheme || 'light';
     
     // Set initial theme
     setTheme(defaultTheme);
@@ -745,12 +746,10 @@ function initThemeToggle() {
         }, 150);
     });
     
-    // Listen for system theme changes
-    prefersDark.addEventListener('change', (e) => {
-        if (!localStorage.getItem('theme')) {
-            setTheme(e.matches ? 'dark' : 'light');
-        }
-    });
+    // No system-theme listener. setTheme always writes localStorage, so the
+    // "has the visitor chosen yet" guard this used to sit behind was false
+    // after the first paint anyway, and following the OS would override the
+    // light default this site now opens with.
 }
 
 function setTheme(theme) {
@@ -784,29 +783,54 @@ function updateParticleColors() {
 }
 
 // ===== ENHANCED THEME ANIMATIONS =====
+//
+// This used to apply `transition: ... !important` to `*` permanently, then
+// switch transitions OFF for 50ms whenever the theme changed. That is the
+// wrong way round in both halves:
+//
+//   * the theme change itself ended up instant, because transitions were
+//     disabled across the exact frames the colours were changing; and
+//   * every other transition on the site was clamped to that one property
+//     list for the whole session. `!important` on `*` outranks a normal
+//     declaration in any rule, however specific, so anything animating
+//     transform, opacity or filter snapped instead of easing. That is what
+//     made hover states flicker.
+//
+// The transition now applies only while a theme switch is in flight, and
+// nothing is forced the rest of the time.
+const THEME_SWITCH_MS = 300;
+
 function addThemeTransitionEffects() {
-    // Add smooth transition to all elements when theme changes
     const style = document.createElement('style');
     style.textContent = `
-        * {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+        .theme-switching,
+        .theme-switching * {
+            transition: background-color ${THEME_SWITCH_MS}ms ease,
+                        color ${THEME_SWITCH_MS}ms ease,
+                        border-color ${THEME_SWITCH_MS}ms ease,
+                        box-shadow ${THEME_SWITCH_MS}ms ease !important;
         }
-        
-        .theme-transition-disable * {
-            transition: none !important;
+
+        @media (prefers-reduced-motion: reduce) {
+            .theme-switching,
+            .theme-switching * {
+                transition: none !important;
+            }
         }
     `;
     document.head.appendChild(style);
-    
-    // Listen for theme changes and add transition effects
-    window.addEventListener('themeChange', (e) => {
-        // Temporarily disable transitions during theme switch
-        document.body.classList.add('theme-transition-disable');
-        
-        setTimeout(() => {
-            document.body.classList.remove('theme-transition-disable');
-        }, 50);
-        
+
+    let settle;
+    window.addEventListener('themeChange', () => {
+        const root = document.documentElement;
+        root.classList.add('theme-switching');
+        // Restart the timer on a rapid double toggle, so the class is never
+        // stripped while a switch is still running.
+        clearTimeout(settle);
+        settle = setTimeout(
+            () => root.classList.remove('theme-switching'),
+            THEME_SWITCH_MS + 60
+        );
     });
 }
 
@@ -903,7 +927,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize theme system first
     initThemeToggle();
     addThemeTransitionEffects();
-    
+    initAvatarBubble();
+
     // Initialize Three.js particle system
     initThreeJS();
     
@@ -1103,3 +1128,43 @@ document.addEventListener('keydown', function(e) {
 
 // Initialize particles
 document.addEventListener('DOMContentLoaded', createParticles);
+
+// ===== HERO PORTRAIT SPEECH BUBBLE =====
+// Picks a fresh line each time the portrait is hovered. Never repeats the
+// line that is already showing, so a second hover always says something new.
+function initAvatarBubble() {
+    const bubble = document.querySelector('.avatar-bubble-text');
+    const avatar = document.querySelector('.hero-avatar');
+    if (!bubble || !avatar) return;
+
+    const LINES = [
+        'Ships on Fridays',
+        'Cache me if you can',
+        'It works in prod too',
+        'Talks fluent Kafka',
+        'Replays your outages',
+        'Has opinions about queues',
+        'Reads the stack trace first',
+        'Idempotent by default',
+        'Will ask where state lives',
+        'Deletes more code than I write'
+    ];
+
+    let last = bubble.textContent.trim();
+
+    function pick() {
+        let next = last;
+        // With ten lines this settles immediately; the guard is only here so
+        // a hover never appears to do nothing.
+        while (next === last && LINES.length > 1) {
+            next = LINES[Math.floor(Math.random() * LINES.length)];
+        }
+        last = next;
+        bubble.textContent = next;
+    }
+
+    // Swap on the way in, while the bubble is still hidden, so the text never
+    // changes in front of the reader.
+    avatar.addEventListener('pointerenter', pick);
+    avatar.addEventListener('focusin', pick);
+}
