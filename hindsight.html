@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindsight · Flight Recorder for AI Agents · Aayush Kumar Mishra</title>
+<meta name="description" content="Re-run what your AI agent already did in production against a different model, and get a statistically sound answer before you switch.">
+<link rel="canonical" href="https://aayushmishra.in/hindsight.html">
+<meta name="theme-color" content="#800020" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#150408" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Aayush Kumar Mishra">
+<meta property="og:url" content="https://aayushmishra.in/hindsight.html">
+<meta property="og:title" content="Hindsight - a flight recorder for AI agents">
+<meta property="og:description" content="Record what an agent did in production, then re-run those same cases against a different model to see what would have happened before you change anything.">
+<meta property="og:image" content="https://aayushmishra.in/assets/case-studies/hindsight-hld.gif">
+<meta property="og:image:alt" content="Model calls, tool results and clock reads flow into a recorder and a sealed append-only log, which you can then question.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hindsight - a flight recorder for AI agents">
+<meta name="twitter:description" content="Re-run what your agent already did in production against a different model, and get a statistically sound answer before you switch.">
+<meta name="twitter:image" content="https://aayushmishra.in/assets/case-studies/hindsight-hld.gif">
+<!-- Its own mark rather than the site monogram: one recorded run forking into
+     two replays, the same shape as the diagram on the card. -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23800020'/%3E%3Cg stroke='%23FFF9F2' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 16 H15'/%3E%3Cpath d='M15 16 Q19 16 19 12 V10 H23'/%3E%3Cpath d='M15 16 Q19 16 19 20 V22 H23'/%3E%3C/g%3E%3Ccircle cx='7' cy='16' r='2.6' fill='%23FFF9F2'/%3E%3Ccircle cx='24' cy='10' r='2.6' fill='%23C9A7AE'/%3E%3Ccircle cx='24' cy='22' r='2.6' fill='%237FD1A0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+:root {
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Archivo', -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --accent-core: #E4707E;
+    --accent-lift: #F09AA4;
+    --bg-primary: #150408;
+    --text-primary: #F8F3F4;
+    --text-secondary: #DCD1D3;
+    --text-muted: #B5A5A9;
+    --accent-rgb: 228, 112, 126;
+    --accent-text: #F08A97;
+    --surface-primary: rgba(34, 14, 20, 0.95);
+    --surface-tertiary: rgba(52, 24, 33, 0.95);
+    --border-color: rgba(var(--accent-rgb), 0.16);
+    --hairline: rgba(246, 234, 236, 0.1);
+    --hairline-strong: rgba(var(--accent-rgb), 0.34);
+    --paper: #FBF7EF;
+    --ink: #33302B;
+    --ok: #6FCF97;
+    --bad: #E28B80;
+    --warn: #D8AB5A;
+    --dim: #8A7A7D;
+
+    /* The terminal is always dark, in both themes. A terminal that repaints
+       itself to match the page stops reading as a terminal, and nobody's
+       actual shell turns cream when the sun comes up. These are fixed. */
+    --term-bg: #0E1117;
+    --term-chrome: #171B22;
+    --term-rule: rgba(255, 255, 255, 0.08);
+    --term-fg: #C9D1D9;
+    --term-dim: #6E7681;
+    --term-ok: #56D364;
+    --term-bad: #F85149;
+    --term-warn: #E3B341;
+    --term-accent: #79C0FF;
+    --term-user: #56D364;
+    --term-tab-on: rgba(255, 255, 255, 0.06);
+    --term-tab-edge: rgba(255, 255, 255, 0.14);
+}
+[data-theme="light"] {
+    --accent-core: #800020;
+    --accent-lift: #5E0018;
+    --bg-primary: #FFF9F2;
+    --text-primary: #1A0A0E;
+    --text-secondary: #4E3A3D;
+    --text-muted: #71585C;
+    --accent-rgb: 128, 0, 32;
+    --accent-text: #800020;
+    --surface-primary: rgba(255, 255, 255, 0.92);
+    --surface-tertiary: rgba(243, 230, 213, 0.95);
+    --border-color: rgba(var(--accent-rgb), 0.18);
+    --hairline: rgba(26, 10, 14, 0.12);
+    --hairline-strong: rgba(var(--accent-rgb), 0.3);
+    --ok: #1F6B3D;
+    --bad: #8C2F24;
+    --warn: #8A5A10;
+    --dim: #8A7A7D;
+    /* --term-* are deliberately not redefined here. */
+}
+
+* { box-sizing: border-box; }
+body {
+    margin: 0; background: var(--bg-primary); color: var(--text-primary);
+    font-family: var(--font-body); font-size: 16px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1000px; margin: 0 auto; padding-inline: 22px; }
+p { max-width: 68ch; }
+
+.topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg-primary) 88%, transparent);
+    backdrop-filter: blur(14px); border-bottom: 1px solid var(--hairline);
+}
+.topbar .container {
+    display: flex; align-items: center; justify-content: space-between; padding-block: 12px;
+}
+.back { text-decoration: none; color: var(--text-secondary); font-size: .86rem; }
+.back:hover { color: var(--accent-text); }
+.icon-btn {
+    background: transparent; border: 1px solid var(--border-color);
+    color: var(--text-secondary); border-radius: 50%; width: 38px; height: 38px; cursor: pointer;
+}
+.icon-btn:hover { color: var(--accent-text); }
+
+header { padding-block: clamp(2.5rem, 5vw, 4rem) 2rem; }
+.kicker {
+    font-family: var(--font-mono); font-size: .68rem; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--accent-text); margin-bottom: 12px;
+}
+h1 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(2.2rem, 6vw, 3.5rem); line-height: 1.04; margin: 0 0 18px;
+    text-wrap: balance;
+}
+.tagline {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+    line-height: 1.35; color: var(--accent-text);
+    margin: 0 0 18px; max-width: 30ch;
+}
+.lede { font-size: clamp(1rem, 2vw, 1.12rem); color: var(--text-secondary); margin: 0 0 8px; }
+
+section { padding-block: clamp(2.75rem, 5vw, 4.25rem); border-top: 1px solid var(--hairline); }
+h2 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(1.5rem, 3.4vw, 2.1rem); line-height: 1.15; margin: 0 0 10px;
+    text-wrap: balance;
+}
+.sub { color: var(--text-muted); margin: 0 0 26px; }
+/* Marks the sections that are a demonstration, so the example agent is never
+   mistaken for the project itself. */
+.eg-label {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: .62rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--accent-text);
+    border: 1px solid var(--border-color);
+    background: var(--surface-tertiary);
+    border-radius: 999px;
+    padding: 3px 11px;
+    margin-bottom: 12px;
+}
+code {
+    font-family: var(--font-mono); font-size: .86em;
+    background: var(--surface-tertiary); padding: 2px 6px; border-radius: 4px;
+}
+
+/* ---------- sweep chart ---------- */
+.sweep {
+    border: 1px solid var(--border-color); border-radius: 12px;
+    background: var(--surface-primary); padding: 22px 20px 14px;
+}
+.sweep svg { width: 100%; height: auto; display: block; }
+.sw-lbl { fill: var(--text-primary); font-family: var(--font-mono); font-size: 12px; }
+.sw-sub { fill: var(--text-muted); font-family: var(--font-mono); font-size: 10px; }
+.sw-axis { stroke: var(--hairline); stroke-width: 1; }
+.sw-zero { stroke: var(--hairline-strong); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.sw-ci { stroke: var(--text-muted); stroke-width: 2; opacity: .55; }
+.sw-dot-null { fill: var(--text-muted); }
+.sw-dot-bad { fill: var(--bad); }
+.sw-dot-good { fill: var(--ok); }
+.sw-verdict-null { fill: var(--text-muted); font-family: var(--font-mono); font-size: 11px; }
+.sw-verdict-bad { fill: var(--bad); font-family: var(--font-mono); font-size: 11px; font-weight: 600; }
+.sw-verdict-good { fill: var(--ok); font-family: var(--font-mono); font-size: 11px; font-weight: 600; }
+.sw-val-good { fill: var(--ok); font-family: var(--font-mono); font-size: 11px; font-weight: 600; }
+.sw-val-bad { fill: var(--bad); font-family: var(--font-mono); font-size: 11px; font-weight: 600; }
+.sweep-foot {
+    margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--hairline);
+    font-family: var(--font-mono); font-size: .72rem; color: var(--text-muted);
+}
+.sweep-foot b { color: var(--bad); font-weight: 600; }
+.sweep-foot.ok b { color: var(--ok); }
+
+/* ---------- drill-down ---------- */
+.shared {
+    margin-top: 22px; padding: 13px 16px; border-radius: 10px;
+    background: var(--surface-tertiary); border: 1px dashed var(--hairline-strong);
+    font-family: var(--font-mono); font-size: .74rem; color: var(--text-muted);
+}
+.shared b { color: var(--accent-text); font-weight: 500; }
+.swap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+.swap-col {
+    border: 1px solid var(--border-color); border-radius: 10px;
+    padding: 16px 18px; background: var(--surface-primary);
+    display: flex; flex-direction: column; align-items: flex-start;
+}
+.swap-col.base { border-top: 3px solid var(--ok); }
+.swap-col.cf { border-top: 3px solid var(--bad); }
+.swap-col h4 {
+    margin: 0 0 3px; font-family: var(--font-mono); font-size: .76rem;
+    color: var(--text-secondary); font-weight: 500;
+}
+.swap-col .acc { font-size: .7rem; color: var(--text-muted); font-family: var(--font-mono); }
+.swap-col .verdict { font-family: var(--font-display); font-size: 1.8rem; margin: 12px 0 2px; }
+.swap-col.base .verdict { color: var(--text-muted); }
+.swap-col.cf .verdict { color: var(--bad); }
+.swap-col .verdict.good { color: var(--ok); }
+.swap-col .judge { font-size: .78rem; color: var(--text-muted); }
+@media (max-width: 680px) { .swap { grid-template-columns: 1fr; } }
+
+/* ---------- terminal ---------- */
+.terminal {
+    background: var(--term-bg); border: 1px solid var(--border-color);
+    border-radius: 12px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,.4);
+}
+.term-chrome {
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+    padding: 11px 15px; border-bottom: 1px solid var(--term-rule);
+    background: var(--term-chrome);
+}
+.dot-r,.dot-y,.dot-g { width: 11px; height: 11px; border-radius: 50%; }
+.dot-r{background:#FF5F57}.dot-y{background:#FEBC2E}.dot-g{background:#28C840}
+.term-title { margin-left: 10px; font-family: var(--font-mono); font-size: .72rem; color: var(--term-dim); }
+.term-tabs { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
+.term-tab {
+    cursor: pointer; font-family: var(--font-mono); font-size: .68rem;
+    background: transparent; color: var(--term-dim);
+    border: 1px solid transparent; border-radius: 5px; padding: 4px 10px;
+}
+.term-tab[aria-selected="true"] {
+    color: var(--term-accent); border-color: var(--term-tab-edge); background: var(--term-tab-on);
+}
+.term-body {
+    padding: 18px 20px 22px; min-height: 330px;
+    font-family: var(--font-mono); font-size: .775rem; line-height: 1.72;
+    overflow-x: auto; color: var(--term-fg);
+}
+.term-body pre { margin: 0; white-space: pre; }
+.prompt { color: var(--term-fg); }
+.prompt::before {
+    content: "aayush@hindsight:~$ ";
+    color: var(--term-user);
+    font-weight: 600;
+}
+.cursor {
+    display: inline-block; width: 8px; height: 1em; vertical-align: -2px;
+    background: var(--term-accent); animation: blink 1.05s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0 } }
+.g{color:var(--term-ok)}.r{color:var(--term-bad)}.y{color:var(--term-warn)}
+.a{color:var(--term-accent)}.d{color:var(--term-dim)}
+.term-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 10px 15px; border-top: 1px solid var(--term-rule);
+    font-family: var(--font-mono); font-size: .68rem; color: var(--term-dim);
+}
+.replay {
+    cursor: pointer; font-family: var(--font-mono); font-size: .68rem;
+    background: transparent; color: var(--term-accent);
+    border: 1px solid var(--term-tab-edge); border-radius: 5px; padding: 5px 12px;
+}
+.replay:hover { background: var(--term-tab-on); }
+
+/* ---------- diagram ---------- */
+.hld-figure {
+    margin: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px;
+    background: #FBF7EF;
+    overflow: hidden;
+}
+.hld-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* ---------- tech ---------- */
+.tech { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap: 12px; }
+.tech-col {
+    border: 1px solid var(--border-color); border-radius: 10px;
+    padding: 14px 16px; background: var(--surface-primary);
+}
+.tech-col h4 {
+    margin: 0 0 10px; font-family: var(--font-mono); font-size: .66rem;
+    letter-spacing: .13em; text-transform: uppercase; color: var(--accent-text); font-weight: 500;
+}
+.tech-col ul { margin: 0; padding: 0; list-style: none; }
+.tech-col li {
+    font-size: .86rem; color: var(--text-secondary);
+    padding: 4px 0; border-bottom: 1px solid var(--hairline);
+}
+.tech-col li:last-child { border-bottom: 0; }
+
+footer { padding-block: 34px 60px; color: var(--text-muted); font-size: .82rem; border-top: 1px solid var(--hairline); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important } }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="container">
+  <a class="back" href="index.html#current-build"><i class="fas fa-arrow-left"></i>&nbsp; Back</a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+</div></div>
+
+<header><div class="container">
+  <div class="kicker">Side project · Infrastructure</div>
+  <h1>Hindsight</h1>
+  <p class="tagline">An event-sourced flight recorder and counterfactual wind tunnel for AI agents.</p>
+  <p class="lede">
+    It records what an agent did in production, then re-runs those same cases against a
+    different model, prompt, or policy. You find out what would have happened before you
+    change anything in production.
+  </p>
+  <p class="lede">
+    It is infrastructure, not an agent. You install an SDK next to whatever you already
+    run, in Python or through an MCP proxy for anything out of process, and it works the
+    same whether your agent does document extraction, support triage, or prior
+    authorisation.
+  </p>
+</div></header>
+
+<section>
+  <div class="container">
+    <span class="eg-label">Worked example</span>
+    <h2>Three proposals, scored against real history</h2>
+    <p class="sub">
+      The agent below is a demonstration, not the project. It is an on-call triage agent that
+      reads alerts and decides whether to escalate or keep monitoring, and it stands in for
+      whatever you happen to run. It is on opus-5. Someone wants to upgrade, someone wants to
+      cut cost, someone wants to cut cost harder. Each proposal was re-run against the same 120
+      recorded incidents.
+    </p>
+
+    <div class="sweep">
+      <svg viewBox="0 0 900 250" role="img"
+           aria-label="Effect of three proposed model changes across 120 recorded incidents. Upgrading to opus-5-1 is better by 0.200. Switching to sonnet-5 shows no detectable difference. Switching to haiku-4-5 is worse by 0.267.">
+        <line class="sw-zero" x1="459" y1="30" x2="459" y2="198"/>
+        <text class="sw-sub" x="459" y="222" text-anchor="middle">no change</text>
+        <text class="sw-sub" x="250" y="222" text-anchor="middle">worse</text>
+        <text class="sw-sub" x="660" y="222" text-anchor="middle">better</text>
+
+        <text class="sw-lbl" x="0" y="62">opus-5-1</text>
+        <text class="sw-sub" x="0" y="77">upgrade</text>
+        <line class="sw-ci" x1="528" y1="62" x2="666" y2="62"/>
+        <line class="sw-ci" x1="528" y1="56" x2="528" y2="68"/>
+        <line class="sw-ci" x1="666" y1="56" x2="666" y2="68"/>
+        <circle class="sw-dot-good" cx="597" cy="62" r="7"/>
+        <text class="sw-val-good" x="597" y="46" text-anchor="middle">+0.200</text>
+        <text class="sw-verdict-good" x="700" y="66">better · p 0.0009</text>
+
+        <text class="sw-lbl" x="0" y="122">sonnet-5</text>
+        <text class="sw-sub" x="0" y="137">cheaper</text>
+        <line class="sw-ci" x1="384" y1="122" x2="545" y2="122"/>
+        <line class="sw-ci" x1="384" y1="116" x2="384" y2="128"/>
+        <line class="sw-ci" x1="545" y1="116" x2="545" y2="128"/>
+        <circle class="sw-dot-null" cx="465" cy="122" r="6"/>
+        <text class="sw-verdict-null" x="700" y="126">no difference · safe to switch</text>
+
+        <text class="sw-lbl" x="0" y="182">haiku-4.5</text>
+        <text class="sw-sub" x="0" y="197">cheapest</text>
+        <line class="sw-ci" x1="190" y1="182" x2="362" y2="182"/>
+        <line class="sw-ci" x1="190" y1="176" x2="190" y2="188"/>
+        <line class="sw-ci" x1="362" y1="176" x2="362" y2="188"/>
+        <circle class="sw-dot-bad" cx="276" cy="182" r="7"/>
+        <text class="sw-val-bad" x="276" y="166" text-anchor="middle">−0.267</text>
+        <text class="sw-verdict-bad" x="700" y="186">worse · p 0.0009</text>
+      </svg>
+
+      <div class="sweep-foot ok">
+        <b>BEST: opus-5-1</b> &nbsp;+0.200 [+0.100, +0.300] at 95%, adjusted p = 0.0009
+      </div>
+    </div>
+
+    <p style="margin-top:20px">
+      Three proposals, three different answers. The upgrade is worth buying. The cheaper model
+      is genuinely equivalent, so that saving can be taken without arguing about it. The cheapest
+      model would have made the agent measurably worse at deciding when to wake someone up.
+    </p>
+    <p>
+      The middle result is the one that is hardest to get any other way. "No detectable
+      difference" on a model costing a fraction as much is real money, but only if the
+      comparison was paired against the same incidents and corrected for testing three things at
+      once. Reading twenty outputs side by side cannot tell you that.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <span class="eg-label">Worked example</span>
+    <h2>What re-running one incident looks like</h2>
+    <p class="sub">
+      One incident from the same sweep. The agent's state is rebuilt from the recording up to
+      a chosen point, then the upgraded model takes over from there. This is the mechanism
+      underneath every sweep, whatever the agent does.
+    </p>
+
+    <div class="shared">
+      <b>Replayed from the recording, identical on both sides:</b><br>
+      <span style="color:var(--text-secondary)">"disk on db-02 is at 94 percent and climbing. Escalate or monitor?"</span><br>
+      Served straight from the log, so it costs nothing and touches no network.
+    </div>
+
+    <div class="swap">
+      <div class="swap-col base">
+        <h4>claude-opus-5 &nbsp;·&nbsp; what really happened</h4>
+        <span class="acc">in production</span>
+        <div class="verdict">monitor</div>
+        <span class="judge">disk filled overnight, the service went down at 04:10</span>
+      </div>
+      <div class="swap-col cf">
+        <h4>claude-opus-5-1 &nbsp;·&nbsp; what would have happened</h4>
+        <span class="acc">the proposed upgrade</span>
+        <div class="verdict good">escalate</div>
+        <span class="judge">would have caught it before the outage</span>
+      </div>
+    </div>
+
+    <p style="margin-top:18px">
+      Everything before the switch is identical, so the model is the only thing that can explain
+      the difference. You are not writing a new test, you are running a real incident again with
+      one variable moved.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>Watch it run</h2>
+    <p class="sub">Captured output, played back at the speed it actually took.</p>
+
+    <div class="terminal">
+      <div class="term-chrome">
+        <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+        <span class="term-title">hindsight</span>
+        <div class="term-tabs" role="tablist">
+          <button class="term-tab" role="tab" aria-selected="true" data-cast="whatif">what if</button>
+          <button class="term-tab" role="tab" aria-selected="false" data-cast="swap">one case</button>
+          <button class="term-tab" role="tab" aria-selected="false" data-cast="replay">replay</button>
+          <button class="term-tab" role="tab" aria-selected="false" data-cast="tamper">tamper</button>
+        </div>
+      </div>
+      <div class="term-body"><pre id="screen"></pre></div>
+      <div class="term-foot">
+        <span id="term-status">ready</span>
+        <button class="replay" id="replay-btn"><i class="fas fa-rotate-right"></i>&nbsp; replay</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>How it hangs together</h2>
+    <p class="sub">Recording on the left, the questions you can ask on the right.</p>
+
+    <figure class="hld-figure">
+      <img src="assets/case-studies/hindsight-hld.gif"
+           alt="Model calls, tool results and clock reads flow into a recorder that strips secrets and seals each record into an append-only log. From that log you can ask what if we change the model, whether behaviour drifted, how it is doing now, and prove it to an auditor."
+           loading="lazy" decoding="async" width="1400" height="460">
+    </figure>
+  </div>
+</section>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>Built with</h2>
+    <div class="tech">
+      <div class="tech-col">
+        <h4>Core</h4>
+        <ul><li>Python</li><li>Go</li><li>Protocol Buffers</li><li>gRPC-style schemas</li></ul>
+      </div>
+      <div class="tech-col">
+        <h4>Data</h4>
+        <ul><li>Apache Kafka</li><li>ClickHouse</li><li>PostgreSQL</li><li>S3-compatible storage</li></ul>
+      </div>
+      <div class="tech-col">
+        <h4>Method</h4>
+        <ul><li>Event sourcing</li><li>Bootstrap resampling</li><li>Merkle trees</li><li>Ed25519 signatures</li></ul>
+      </div>
+      <div class="tech-col">
+        <h4>Integrations</h4>
+        <ul><li>Model Context Protocol</li><li>Anthropic SDK</li><li>AWS Bedrock</li><li>OpenTelemetry</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="container">
+  <span id="foot-when">Private repository. Happy to walk through the internals in conversation.</span>
+</div></footer>
+
+<script>
+(function () {
+  var root = document.documentElement, toggle = document.getElementById('theme-toggle');
+  function paint(t) {
+    root.setAttribute('data-theme', t);
+    toggle.innerHTML = t === 'light' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+  }
+  // Light default, matching the main site. The OS preference is not consulted.
+  var saved = null;
+  try { saved = localStorage.getItem('theme'); } catch (e) {}
+  paint(saved || 'light');
+  toggle.addEventListener('click', function () {
+    var n = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    paint(n); try { localStorage.setItem('theme', n); } catch (e) {}
+  });
+
+  var CASTS = {
+    whatif: {
+      cmd: 'hindsight whatif --model opus-5-1 --model sonnet-5 --model haiku-4-5 --since 30d',
+      took: '360 forks',
+      lines: [
+        ['', 40],
+        ['<span class="d">recording 120 production runs from the triage agent...</span>', 240],
+        ['<span class="d">estimate: 360 forks, ~327,600 tokens, ~$0.98</span>', 440],
+        ['', 60],
+        ['<span class="g">BEST: opus-5-1</span>  +0.200 [+0.100, +0.300] at 95%,', 90],
+        ['                adjusted p=0.0009', 380],
+        ['', 50],
+        ['forks     360 (360 ok, 0 failed)', 80],
+        ['tokens    491,400', 220],
+        ['', 40],
+        ['<span class="d">model        n    effect                     p(adj)  verdict</span>', 70],
+        ['<span class="d">---------------------------------------------------------------</span>', 60],
+        ['opus-5-1     120  <span class="g">+0.200 [+0.100, +0.300]</span>    0.0009  <span class="g">better</span>', 130],
+        ['sonnet-5     120  +0.008 [-0.109, +0.125]    1.0000  no difference', 130],
+        ['haiku-4-5    120  <span class="r">-0.267 [-0.392, -0.142]</span>    0.0009  <span class="r">worse</span>', 320],
+        ['', 40],
+        ['<span class="y">Upgrade is worth it. Sonnet is a free saving.</span>', 70],
+        ['<span class="y">Haiku would have made triage measurably worse.</span>', 0]
+      ]
+    },
+    swap: {
+      cmd: 'hindsight whatif --model opus-5-1 --run run_615871d2c46b --at 1',
+      took: '0.003s',
+      lines: [
+        ['', 40],
+        ['recorded   claude-opus-5    <span class="d">(what shipped)</span>', 70],
+        ['forked     claude-opus-5-1  <span class="d">(the proposal)</span>', 70],
+        ['cut        after boundary 1', 240],
+        ['', 40],
+        ['<span class="d">=== REPLAYED FROM THE RECORDING ===</span>', 130],
+        ['  "disk on db-02 is at 94 percent and climbing."', 80],
+        ['  <span class="d">^ served from the log: no tokens, no network</span>', 340],
+        ['', 40],
+        ['<span class="d">=== RE-EXECUTED FROM HERE ===</span>', 150],
+        ['  opus-5     decision  <span class="y">monitor</span>    service went down 04:10', 110],
+        ['  opus-5-1   decision  <span class="g">escalate</span>   would have caught it', 320],
+        ['', 40],
+        ['  prefix hash    dd2d139197b9f9433802a53564555c84', 80],
+        ['  wall clock     0.003s', 260],
+        ['', 40],
+        ['<span class="y">One real incident, one variable moved.</span>', 0]
+      ]
+    },
+    replay: {
+      cmd: 'hindsight replay --report summary',
+      took: '12 runs',
+      lines: [
+        ['', 40],
+        ['<span class="d">replaying run_0d6ea3c2796d (4 boundaries)</span>', 50],
+        ['<span class="d">replaying run_1a5094b4c180 (6 boundaries)</span>', 50],
+        ['<span class="d">… 10 more</span>', 240],
+        ['', 40],
+        ['run_0d6ea3c2796d  <span class="g">deterministic</span>  coverage 100% (4/4)', 75],
+        ['run_1a5094b4c180  <span class="g">deterministic</span>  coverage 100% (6/6)', 75],
+        ['run_2e8f654e7b7f  <span class="g">deterministic</span>  coverage 100% (3/3)', 75],
+        ['run_6c56c46cf943  <span class="g">deterministic</span>  coverage 100% (6/6)', 75],
+        ['run_8a7544f5767f  <span class="g">deterministic</span>  coverage 100% (6/6)', 75],
+        ['run_8bae53810fc0  <span class="g">deterministic</span>  coverage 100% (3/3)', 75],
+        ['run_a6015ba4221f  <span class="g">deterministic</span>  coverage 100% (6/6)', 75],
+        ['run_a7a5dbd646da  <span class="g">deterministic</span>  coverage 100% (6/6)', 75],
+        ['run_a8898604aa82  <span class="g">deterministic</span>  coverage 100% (3/3)', 75],
+        ['run_d191cda40212  <span class="g">deterministic</span>  coverage 100% (2/2)', 75],
+        ['run_e6d8f1bea3ee  <span class="g">deterministic</span>  coverage 100% (6/6)', 75],
+        ['run_ee6d748dadd1  <span class="g">deterministic</span>  coverage 100% (6/6)', 280],
+        ['', 40],
+        ['<span class="d">every recorded step reproduced, with no network</span>', 0]
+      ]
+    },
+    tamper: {
+      cmd: 'hindsight verify --tamper-check',
+      took: '0.78s',
+      lines: [
+        ['', 40],
+        ['<span class="d">1. as recorded</span>', 130],
+        ['  <span class="g">ok</span>   verified, 4 records, head 4e48f27b542b', 340],
+        ['', 40],
+        ['<span class="d">2. one tool result rewritten</span>', 130],
+        ['  rewrote limit_cents 50000 -&gt; 10000', 280],
+        [' <span class="r">FAIL</span>  chain breaks at record 2', 340],
+        ['', 40],
+        ['<span class="d">3. the last record deleted</span>', 130],
+        [' <span class="r">FAIL</span>  claims 4 records, log holds 3', 300],
+        ['', 40],
+        ['<span class="g">Both edits were caught.</span>', 0]
+      ]
+    }
+  };
+
+  var screen = document.getElementById('screen');
+  var status = document.getElementById('term-status');
+  var tabs = [].slice.call(document.querySelectorAll('.term-tab'));
+  var timers = [], current = 'whatif';
+
+  function play(name) {
+    timers.forEach(clearTimeout); timers = [];
+    current = name;
+    var cast = CASTS[name];
+    var html = '<span class="prompt">' + cast.cmd + '</span>\n';
+    screen.innerHTML = html + '<span class="cursor"></span>';
+    status.textContent = 'running…';
+    var delay = 340;
+    cast.lines.forEach(function (row) {
+      timers.push(setTimeout(function () {
+        html += row[0] + '\n';
+        screen.innerHTML = html + '<span class="cursor"></span>';
+      }, delay));
+      delay += row[1];
+    });
+    timers.push(setTimeout(function () {
+      screen.innerHTML = html;
+      status.textContent = 'exit 0 · ' + cast.took;
+    }, delay + 120));
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (o) { o.setAttribute('aria-selected', String(o === tab)); });
+      play(tab.dataset.cast);
+    });
+  });
+  document.getElementById('replay-btn').addEventListener('click', function () { play(current); });
+
+  var started = false;
+  new IntersectionObserver(function (e) {
+    if (!started && e[0].isIntersecting) { started = true; play('whatif'); }
+  }, { threshold: 0.25 }).observe(document.querySelector('.terminal'));
+})();
+</script>
+</body>
+</html>
